@@ -8,10 +8,8 @@ jobs:
   rename-project:
     if: ${{ !contains (github.repository, '/mltemplate') }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           # by default, it uses a depth of 1
           # this fetches all history so that we can read each commit
