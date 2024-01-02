@@ -6,7 +6,7 @@ permissions: write-all
 
 jobs:
   rename-project:
-    if: ${{ !contains (github.repository, '/python-project-template') }}
+    if: ${{ !contains (github.repository, '/mltemplate') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
