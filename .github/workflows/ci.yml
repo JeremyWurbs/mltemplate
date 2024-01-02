@@ -1,4 +1,4 @@
-# This is a basic continuous integration (CI) workflow to run on every push or pull-request.
+# This is a basic continuous integration (CI) workflow to run on every push or pull-request to main.
 #
 # It builds the project and runs lint tests, as well as unit tests on Linux, MacOS and Windows.
 
@@ -51,7 +51,7 @@ jobs:
       - name: Install project
         run: make install
       - name: Install test dependencies
-        run: pip install pytest>=7.4.4 pytest-cov>=4.1.0
+        run: pip install pylint>=3.0.3 pytest>=7.4.4 pytest-cov>=4.1.0
       - name: Run tests
         run: make test
       - name: "Upload coverage to Codecov"
@@ -75,7 +75,7 @@ jobs:
       - name: Install project
         run: make install
       - name: Install test dependencies
-        run: pip install pytest>=7.4.4 pytest-cov>=4.1.0
+        run: pip install pylint>=3.0.3 pytest>=7.4.4 pytest-cov>=4.1.0
       - name: Run tests
         run: make test
 
@@ -97,6 +97,6 @@ jobs:
       - name: Install project
         run: pip install -e .[test]
       - name: Install test dependencies
-        run: pip install pytest>=7.4.4 pytest-cov>=4.1.0
+        run: pip install pylint>=3.0.3 pytest>=7.4.4 pytest-cov>=4.1.0
       - name: run tests
         run: pytest -s -vvvv -l --tb=long tests
