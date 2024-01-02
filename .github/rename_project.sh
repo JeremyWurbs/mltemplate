@@ -23,6 +23,9 @@ original_description="An end-to-end starter template for machine learning projec
 
 for filename in $(git ls-files)
 do
+    if [[ $filename == *"workflows"* ]]; then
+        continue
+    fi
     sed -i "s@$original_author@$author@g" $filename
     sed -i "s@$original_name@$name@g" $filename
     sed -i "s@$original_urlname@$urlname@g" $filename
