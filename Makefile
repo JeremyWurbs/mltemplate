@@ -23,17 +23,16 @@ install:          ## Install the project in dev mode.
 	@if [ "$(USING_POETRY)" ]; then poetry install && exit; fi
 	@echo "Don't forget to run 'make virtualenv' if you got errors."
 	$(ENV_PREFIX)pip install -e .[dependencies]
-	$(ENV_PREFIX)pip install -e .[dev-dependencies]
 
 .PHONY: fmt
 fmt:              ## Format code using black & isort.
-	$(ENV_PREFIX)isort project_name/
+	$(ENV_PREFIX)isort mltemplate/
 	$(ENV_PREFIX)black -l 79 project_name/
 	$(ENV_PREFIX)black -l 79 tests/
 
 .PHONY: lint
 lint:             ## Run pep8, black, mypy linters.
-	$(ENV_PREFIX)pylint project_name/
+	$(ENV_PREFIX)pylint mltemplate/
 	#$(ENV_PREFIX)black -l 79 --check project_name/
 	#$(ENV_PREFIX)black -l 79 --check tests/
 	#$(ENV_PREFIX)mypy --ignore-missing-imports project_name/
