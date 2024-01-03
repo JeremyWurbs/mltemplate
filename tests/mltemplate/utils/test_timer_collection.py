@@ -1,7 +1,7 @@
 import pytest
 import time
 
-from lunit.utils import TimerCollection
+from mltemplate.utils import TimerCollection
 
 
 def test_timer_collection():

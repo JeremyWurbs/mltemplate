@@ -51,7 +51,7 @@ jobs:
       - name: Install project
         run: make install
       - name: Install test dependencies
-        run: pip install pylint>=3.0.3 pytest>=7.4.4 pytest-cov>=4.1.0
+        run: pip install pylint>=3.0.3 pytest>=7.4.4 pytest-cov>=4.1.0 black>=23.12.1 mypy>=1.8.0
       - name: Run tests
         run: make test
       - name: "Upload coverage to Codecov"
@@ -76,7 +76,7 @@ jobs:
       - name: Install project
         run: make install
       - name: Install test dependencies
-        run: pip install pylint>=3.0.3 pytest>=7.4.4 pytest-cov>=4.1.0
+        run: pip install pylint>=3.0.3 pytest>=7.4.4 pytest-cov>=4.1.0 black>=23.12.1 mypy>=1.8.0
       - name: Run tests
         run: make test
 
@@ -98,6 +98,6 @@ jobs:
       - name: Install project
         run: pip install -e .[test]
       - name: Install test dependencies
-        run: pip install pylint>=3.0.3 pytest>=7.4.4 pytest-cov>=4.1.0
+        run: pip install pylint>=3.0.3 pytest>=7.4.4 pytest-cov>=4.1.0 black>=23.12.1 mypy>=1.8.0
       - name: run tests
         run: pytest -s -vvvv -l --tb=long tests

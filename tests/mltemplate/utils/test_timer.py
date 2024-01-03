@@ -1,8 +1,8 @@
-"""Unit test methods for lunit.utils.timer utility module."""
+"""Unit test methods for mltemplate.utils.timer utility module."""
 
 import time
 
-from lunit.utils import Timer
+from mltemplate.utils import Timer
 
 
 def test_timer():

@@ -1,14 +1,14 @@
 import logging
 import os
 
-from lunit import Config
-from lunit.utils import default_logger
+from mltemplate import Config
+from mltemplate.utils import default_logger
 
 
 def test_logger():
     logs_filename = Config()['FILE_PATHS']['UNITTEST_LOGS']
     logger = default_logger(
-        name='Lunit',
+        name='mltemplate',
         stream_level=logging.DEBUG,
         file_level=logging.DEBUG,
         file_name=logs_filename)
