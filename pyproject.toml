@@ -29,6 +29,7 @@ requires-python = ">= 3.10"
 [project.scripts]
 hello = "mltemplate:hello"
 train = "mltemplate.scripts.train:entry"
+mltemplate_setup = "mltemplate_setup:initial_mltemplate_setup"
 
 [build-system]
 requires = ["hatchling"]
