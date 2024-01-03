@@ -43,7 +43,24 @@ dev-dependencies = [
     "Sphinx>=7.2.6",
     "sphinx-rtd-theme>=2.0.0",
     "sphinx-simplepdf>=1.6.0",
+    "black>=23.12.1",
+    "isort>=5.13.2",
+    "mypy>=1.8.0",
 ]
+
+[tool.rye.scripts]
+lint = {chain = ["echo:lint", "lint:pylint", "echo:black:mltemplate", "lint:black:mltemplate", "echo:black:tests", "lint:black:tests", "echo:mypy", "lint:black:tests"]}
+"echo:lint" = "echo 'pylint mltemplate/'"
+"lint:pylint" = "pylint mltemplate/"
+"echo:black:mltemplate" = "echo '\nblack -l 120 --check mltemplate/'"
+"lint:black:mltemplate" = "black -l 120 --check mltemplate/"
+"echo:black:tests" = "echo '\nblack -l 120 --check tests/'"
+"lint:black:tests" = "black -l 120 --check tests/"
+"echo:mypy" = "echo '\nmypy --ignore-missing-imports mltemplate/'"
+"lint:mypy" = "mypy --ignore-missing-imports mltemplate/"
+test = {chain = ["echo:test", "test:pytest"]}
+"echo:test" = "echo 'pytest -rs --cov=mltemplate --maxfail=1 --cov-report term-missing -W ignore::DeprecationWarning tests/'"
+"test:pytest" = "pytest -rs --cov=mltemplate --maxfail=1 --cov-report term-missing -W ignore::DeprecationWarning tests/"
 
 [tool.hatch.metadata]
 allow-direct-references = true

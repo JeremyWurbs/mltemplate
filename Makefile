@@ -27,19 +27,19 @@ install:          ## Install the project in dev mode.
 .PHONY: fmt
 fmt:              ## Format code using black & isort.
 	$(ENV_PREFIX)isort mltemplate/
-	$(ENV_PREFIX)black -l 79 project_name/
-	$(ENV_PREFIX)black -l 79 tests/
+	$(ENV_PREFIX)black -l 120 project_name/
+	$(ENV_PREFIX)black -l 120 tests/
 
 .PHONY: lint
 lint:             ## Run pep8, black, mypy linters.
 	$(ENV_PREFIX)pylint mltemplate/
-	#$(ENV_PREFIX)black -l 79 --check mltemplate/
-	#$(ENV_PREFIX)black -l 79 --check tests/
-	#$(ENV_PREFIX)mypy --ignore-missing-imports mltemplate/
+	$(ENV_PREFIX)black -l 120 --check mltemplate/
+	$(ENV_PREFIX)black -l 120 --check tests/
+	$(ENV_PREFIX)mypy --ignore-missing-imports mltemplate/
 
 .PHONY: test
 test: lint        ## Run tests and generate coverage report.
-	$(ENV_PREFIX)pytest -v --cov-config .coveragerc --cov=mltemplate -l --tb=short --maxfail=1 tests/
+	$(ENV_PREFIX)pytest -rs --cov=mltemplate --maxfail=1 --cov-report term-missing -W ignore::DeprecationWarning tests/
 	$(ENV_PREFIX)coverage xml
 	$(ENV_PREFIX)coverage html
 
