@@ -27,6 +27,8 @@ do
         continue
     fi
     sed -i "s@$original_author@$author@g" $filename
+    sed -i "s@$original_name^@$name^@g" $filename
+    sed -i "s@$original_name^^@$name^^@g" $filename
     sed -i "s@$original_name@$name@g" $filename
     sed -i "s@$original_urlname@$urlname@g" $filename
     sed -i "s@$original_description@$description@g" $filename
