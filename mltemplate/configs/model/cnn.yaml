@@ -1,0 +1,2 @@
+_target_: mltemplate.models.cnn.CNN
+name: CNN

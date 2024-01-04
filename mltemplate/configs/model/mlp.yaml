@@ -1,0 +1,4 @@
+_target_: mltemplate.models.mlp.MLP
+name: MLP
+dim: [784, 100, 10]
+dropout: 0.2

@@ -1,0 +1,10 @@
+_target_: mltemplate.data.mnist.MNISTDataModule
+name: MNIST
+data_dir: ${paths.data_dir}
+batch_size: 64 # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+num_train: 55000
+num_val: 5000
+num_workers: 2
+pin_memory: False
+num_channels: 1
+num_classes: 10
