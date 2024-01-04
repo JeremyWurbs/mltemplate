@@ -3,7 +3,7 @@ name = "mltemplate"
 version = "0.1.0"
 description = "An end-to-end starter template for machine learning projects."
 authors = [
-    { name = "Jeremy Wurbs" }
+    { name = "JeremyWurbs" }
 ]
 dependencies = [
     "torch>=2.1.2",

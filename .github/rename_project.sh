@@ -16,7 +16,7 @@ echo "Project Description: $description";
 
 echo "Renaming project..."
 
-original_author="Jeremy Wurbs"
+original_author="JeremyWurbs"
 original_name="mltemplate"
 original_urlname="https://github.com/jeremywurbs/mltemplate/"
 original_description="An end-to-end starter template for machine learning projects."
@@ -36,6 +36,7 @@ do
 done
 
 mv mltemplate $name
+mv _README.md README.md -f
 
 # This command runs only once on GHA!
 rm -rf .github/template.yml

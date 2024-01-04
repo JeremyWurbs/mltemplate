@@ -31,7 +31,7 @@ def test_timer():
     time.sleep(0.1)
     assert timer.duration() > 0.1
     timer.stop()
-    time.sleep(1.)
+    time.sleep(1.0)
     assert timer.duration() < 0.2
     timer.start()
     time.sleep(0.1)
