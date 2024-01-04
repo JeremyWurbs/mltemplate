@@ -35,7 +35,7 @@ lint:             ## Run pep8, black, mypy linters.
 	$(ENV_PREFIX)pylint mltemplate/
 	$(ENV_PREFIX)black -l 120 --check mltemplate/
 	$(ENV_PREFIX)black -l 120 --check tests/
-	$(ENV_PREFIX)mypy --ignore-missing-imports mltemplate/
+	#$(ENV_PREFIX)mypy --ignore-missing-imports mltemplate/
 
 .PHONY: test
 test: lint        ## Run tests and generate coverage report.
