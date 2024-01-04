@@ -23,7 +23,11 @@ $ rye run demo
 ```
 
 This will train a simple MLP model on the MNIST dataset, tracking the training run through MLflow and exposing training 
-logs Tensorboard. The model will be saved to the (MLFlow) model registry when training finishes. 
+logs to Tensorboard. The model will be saved to the (MLFlow) model registry when training finishes, which can be 
+subsequently deployed through the FastAPI backend.
+
+For running the end-to-end demo (which requires a 10-minute discord server setup), refer to the 
+[end-to-end demo](#End-to-End-Demo) section below.
 
 # Package Management
 
@@ -157,3 +161,7 @@ Successfully built mltemplate-0.1.0.tar.gz and mltemplate-0.1.0-py3-none-any.whl
 You have a starter CI workflow in [.github/workflows/ci.yml](.github/workflows/ci.yml) that will lint and test your 
 project on Linux/MacOS/Windows. By default they will run with every push / pull request and can be accessed directly 
 from [GithubActions](https://github.com/JeremyWurbs/mltemplate/actions). 
+
+# End-to-End Demo
+
+TODO: Add a demo of the discord bot here.
