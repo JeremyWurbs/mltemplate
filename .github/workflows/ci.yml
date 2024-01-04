@@ -31,7 +31,7 @@ jobs:
       - name: Install project
         run: make install
       - name: Install pylint
-        run: pip install pylint
+        run: pip install pylint>=3.0.3 black>=23.12.1 mypy>=1.8.0
       - name: Run linter
         run: make lint
 
