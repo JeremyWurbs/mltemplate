@@ -1,21 +1,22 @@
 """Mltemplate Gateway Server"""
 from __future__ import annotations
+
 import logging
 import os
 from typing import Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException
 import mlflow
 import numpy as np
+from fastapi import FastAPI, HTTPException
 from pytorch_lightning import LightningDataModule
 
 from mltemplate import MltemplateBase, Registry
 from mltemplate.backend.gateway import (
-    GatewayConnection,
     BestModelForExperimentInput,
     ChatInput,
     ClassifyIDInput,
     ClassifyImageInput,
+    GatewayConnection,
     ListRunsInput,
     LoadModelInput,
     TrainInput,
@@ -171,7 +172,11 @@ class Server(MltemplateBase):
             logits = model.predict(image.numpy())
             prediction = logits.argmax()
 
-            response = {"label": label, "prediction": int(prediction), "logits": logits.tolist()}
+            response = {
+                "label": label,
+                "prediction": int(prediction),
+                "logits": logits.tolist(),
+            }
             self.logger.debug(f"Returning classify_by_id request with data: {response}.")
             response["image"] = pil_to_ascii(tensor_to_pil(image))
             return response
@@ -201,7 +206,8 @@ class Server(MltemplateBase):
         def train(payload: TrainInput):
             self.logger.debug(f"Received train request with payload {payload}.")
             response = self.training_server.start_training_run(
-                request_id=payload.request_id, command_line_arguments=payload.command_line_arguments
+                request_id=payload.request_id,
+                command_line_arguments=payload.command_line_arguments,
             )
             self.logger.debug(f"Returning train request with data: {response}.")
             return response

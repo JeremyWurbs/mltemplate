@@ -1,9 +1,9 @@
 """Multi-layer perceptron (MLP) model."""
-from PIL.Image import Image
 from typing import List, Optional, Union
 
 import numpy as np
 import torch
+from PIL.Image import Image
 from torch import nn
 
 from mltemplate.utils import ifnone, pil_to_tensor

@@ -1,12 +1,11 @@
 """Convnet model."""
-from PIL.Image import Image
 from typing import Union
 
 import numpy as np
-
 import torch
-from torch import nn
 import torch.nn.functional as F
+from PIL.Image import Image
+from torch import nn
 
 from mltemplate.utils import pil_to_tensor
 

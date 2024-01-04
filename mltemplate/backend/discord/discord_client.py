@@ -2,13 +2,13 @@
 import argparse
 import csv
 import logging
-from math import ceil
 import os
+from math import ceil
 from pathlib import Path
-import requests
 from typing import Any, Dict, List, Optional
 
 import discord
+import requests
 from discord.ext import commands, tasks
 
 from mltemplate import Config, MltemplateBase, Registry

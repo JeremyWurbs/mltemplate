@@ -26,16 +26,19 @@ install:          ## Install the project in dev mode.
 
 .PHONY: fmt
 fmt:              ## Format code using black & isort.
-	$(ENV_PREFIX)isort mltemplate/
+	$(ENV_PREFIX)isort -l 120 mltemplate/
+	$(ENV_PREFIX)isort -l 120 tests/
 	$(ENV_PREFIX)black -l 120 project_name/
 	$(ENV_PREFIX)black -l 120 tests/
 
 .PHONY: lint
-lint:             ## Run pep8, black, mypy linters.
+lint:             ## Run pylint, isort & black linters.
 	$(ENV_PREFIX)pylint mltemplate/
+	$(ENV_PREFIX)pylint tests/
+	${ENV_PREFIX}isort -l 120 --check mltemplate/
+	${ENV_PREFIX}isort -l 120 --check tests/
 	$(ENV_PREFIX)black -l 120 --check mltemplate/
 	$(ENV_PREFIX)black -l 120 --check tests/
-	#$(ENV_PREFIX)mypy --ignore-missing-imports mltemplate/
 
 .PHONY: test
 test: lint        ## Run tests and generate coverage report.
@@ -55,7 +58,6 @@ clean:            ## Clean unused files.
 	@find ./ -name '*~' -exec rm -f {} \;
 	@rm -rf .cache
 	@rm -rf .pytest_cache
-	@rm -rf .mypy_cache
 	@rm -rf build
 	@rm -rf dist
 	@rm -rf *.egg-info

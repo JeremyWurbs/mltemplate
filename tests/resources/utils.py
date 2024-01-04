@@ -1,7 +1,8 @@
 """Utility methods for unit tests."""
+from warnings import warn
+
 import PIL
 from PIL.Image import Image
-from warnings import warn
 
 
 def images_are_identical(image_1: Image, image_2: Image):

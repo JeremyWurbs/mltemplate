@@ -1,20 +1,19 @@
 """Unit test methods for mltemplate.utils.conversions utility module."""
-from PIL.Image import Image
-import pytest
-
 import numpy as np
+import pytest
+from PIL.Image import Image
 
 from mltemplate.utils import (
-    pil_to_ascii,
     ascii_to_pil,
-    pil_to_bytes,
     bytes_to_pil,
+    cv2_to_pil,
+    ndarray_to_pil,
+    pil_to_ascii,
+    pil_to_bytes,
+    pil_to_cv2,
+    pil_to_ndarray,
     pil_to_tensor,
     tensor_to_pil,
-    pil_to_ndarray,
-    ndarray_to_pil,
-    pil_to_cv2,
-    cv2_to_pil,
 )
 from tests import MockAssets, images_are_identical
 

@@ -1,7 +1,7 @@
 """Client-side helper class for communicating with the Mltemplate gateway server."""
 import json
-import requests
 
+import requests
 from fastapi import HTTPException
 
 

@@ -1,9 +1,10 @@
 """Unit test methods for the mltemplate.core.config.Config class."""
 import os
+
 import pytest
 
-from mltemplate_setup import initial_mltemplate_setup
 from mltemplate import Config
+from mltemplate_setup import initial_mltemplate_setup
 
 
 def test_functionality():

@@ -51,18 +51,46 @@ dev-dependencies = [
 ]
 
 [tool.rye.scripts]
-lint = {chain = ["echo:pylint:mltemplate", "lint:pylint:mltemplate", "echo:pylint:tests", "lint:pylint:tests", "echo:black:check:mltemplate", "lint:black:check:mltemplate", "echo:black:check:tests", "lint:black:check:tests"]}
+lint = {chain = [
+    "echo:pylint:mltemplate",
+    "lint:pylint:mltemplate",
+    "echo:pylint:tests",
+    "lint:pylint:tests",
+    "echo:isort:check:mltemplate",
+    "lint:isort:check:mltemplate",
+    "echo:isort:check:tests",
+    "lint:isort:check:tests",
+    "echo:black:check:mltemplate",
+    "lint:black:check:mltemplate",
+    "echo:black:check:tests",
+    "lint:black:check:tests"]}
 "echo:pylint:mltemplate" = "echo 'pylint mltemplate/'"
 "lint:pylint:mltemplate" = "pylint mltemplate/"
 "echo:pylint:tests" = "echo 'pylint --disable=protected-access tests/'"
 "lint:pylint:tests" = "pylint --disable=protected-access tests/"
+"echo:isort:check:mltemplate" = "echo '\nisort -l 120 --check mltemplate/'"
+"lint:isort:check:mltemplate" = "isort -l 120 --check mltemplate/"
+"echo:isort:check:tests" = "echo '\nisort -l 120 --check tests/'"
+"lint:isort:check:tests" = "isort -l 120 --check tests/"
 "echo:black:check:mltemplate" = "echo '\nblack -l 120 --check mltemplate/'"
 "lint:black:check:mltemplate" = "black -l 120 --check mltemplate/"
 "echo:black:check:tests" = "echo '\nblack -l 120 --check tests/'"
 "lint:black:check:tests" = "black -l 120 --check tests/"
-format = {chain = ["echo:black:format:mltemplate", "format:black:format:mltemplate", "echo:black:format:tests", "format:black:format:tests"] }
+format = {chain = [
+    "echo:isort:mltemplate",
+    "format:isort:mltemplate",
+    "echo:black:format:mltemplate",
+    "format:black:format:mltemplate",
+    "echo:isort:tests",
+    "format:isort:tests",
+    "echo:black:format:tests",
+    "format:black:format:tests"] }
+"echo:isort:mltemplate" = "echo '\nisort -l 120 mltemplate/'"
+"format:isort:mltemplate" = "isort -l 120 mltemplate/"
 "echo:black:format:mltemplate" = "echo '\nblack -l 120 mltemplate/'"
 "format:black:format:mltemplate" = "black -l 120 mltemplate/"
+"echo:isort:tests" = "echo '\nisort -l 120 tests/'"
+"format:isort:tests" = "isort -l 120 tests/"
 "echo:black:format:tests" = "echo '\nblack -l 120 tests/'"
 "format:black:format:tests" = "black -l 120 tests/"
 test = {chain = ["echo:test", "test:pytest"]}
@@ -74,3 +102,6 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["mltemplate"]
+
+[tool.isort]
+profile = "black"

@@ -1,10 +1,10 @@
 """Client-side helper class for communicating with the Mltemplate gateway server."""
 import json
-from PIL.Image import Image
-import requests
 from typing import List, Optional
 
+import requests
 from fastapi import HTTPException
+from PIL.Image import Image
 
 from mltemplate.types import Message
 from mltemplate.utils import ascii_to_pil, pil_to_ascii
@@ -42,7 +42,12 @@ class ConnectionClient:
         return json.loads(response.content)
 
     def list_runs(self, experiment: Optional[str] = None):
-        response = requests.request("POST", self.host + "fetch-runs", json={"experiment": experiment}, timeout=60)
+        response = requests.request(
+            "POST",
+            self.host + "fetch-runs",
+            json={"experiment": experiment},
+            timeout=60,
+        )
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)
         return json.loads(response.content)
@@ -55,21 +60,38 @@ class ConnectionClient:
 
     def best_model_for_experiment(self, experiment_name: str):
         response = requests.request(
-            "POST", self.host + "best-model-for-experiment", json={"experiment_name": experiment_name}, timeout=60
+            "POST",
+            self.host + "best-model-for-experiment",
+            json={"experiment_name": experiment_name},
+            timeout=60,
         )
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)
         return json.loads(response.content)
 
-    def load_model(self, model: Optional[str] = None, version: Optional[str] = None, run_id: Optional[str] = None):
+    def load_model(
+        self,
+        model: Optional[str] = None,
+        version: Optional[str] = None,
+        run_id: Optional[str] = None,
+    ):
         response = requests.request(
-            "POST", self.host + "load-model", json={"model": model, "version": version, "run_id": run_id}, timeout=60
+            "POST",
+            self.host + "load-model",
+            json={"model": model, "version": version, "run_id": run_id},
+            timeout=60,
         )
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)
         return json.loads(response.content)
 
-    def classify_id(self, dataset: str = "MNIST", stage: str = "test", idx: int = 0, model: Optional[str] = None):
+    def classify_id(
+        self,
+        dataset: str = "MNIST",
+        stage: str = "test",
+        idx: int = 0,
+        model: Optional[str] = None,
+    ):
         response = requests.request(
             "POST",
             self.host + "classify-id",
@@ -87,17 +109,27 @@ class ConnectionClient:
 
     def classify_image(self, image: Image, model: Optional[str] = None):
         response = requests.request(
-            "POST", self.host + "classify-image", json={"image": pil_to_ascii(image), "model": model}, timeout=60
+            "POST",
+            self.host + "classify-image",
+            json={"image": pil_to_ascii(image), "model": model},
+            timeout=60,
         )
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)
         return json.loads(response.content)
 
-    def train(self, request_id=str, command_line_arguments: str = "--config-name train.yaml model=mlp dataset=mnist"):
+    def train(
+        self,
+        request_id=str,
+        command_line_arguments: str = "--config-name train.yaml model=mlp dataset=mnist",
+    ):
         response = requests.request(
             "POST",
             self.host + "train",
-            json={"request_id": request_id, "command_line_arguments": command_line_arguments},
+            json={
+                "request_id": request_id,
+                "command_line_arguments": command_line_arguments,
+            },
             timeout=24 * 60 * 60,
         )
         if response.status_code != 200:

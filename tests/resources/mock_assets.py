@@ -1,8 +1,7 @@
 """Module containing mock assets for unit testing."""
-from PIL import Image
-
 import cv2
 import numpy as np
+from PIL import Image
 
 
 class MockAssets:

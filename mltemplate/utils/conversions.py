@@ -1,12 +1,12 @@
 """Utility methods relating to image conversion."""
 import base64
 import io
-import PIL
-from PIL.Image import Image
 
 import cv2
 import numpy as np
+import PIL
 import torch
+from PIL.Image import Image
 from torchvision.transforms.v2 import functional as F
 
 from mltemplate.utils import ifnone

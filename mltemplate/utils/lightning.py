@@ -1,9 +1,9 @@
 """Utility class that wraps nn.Modules into pl.LightningModules."""
+import pytorch_lightning as pl
 import torch
-from torch import nn
 import torch.nn.functional as F
 import torchmetrics
-import pytorch_lightning as pl
+from torch import nn
 
 
 class LightningModel(pl.LightningModule):

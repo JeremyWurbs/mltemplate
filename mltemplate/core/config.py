@@ -1,7 +1,7 @@
 """Mltemplate Config class."""
-from configparser import ConfigParser, ExtendedInterpolation
 import json
 import os
+from configparser import ConfigParser, ExtendedInterpolation
 from typing import Any, Dict
 
 

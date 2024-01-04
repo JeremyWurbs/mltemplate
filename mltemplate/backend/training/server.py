@@ -1,9 +1,10 @@
 """Mltemplate Training Server"""
 from __future__ import annotations
+
 import logging
+import os
 import shlex
 import subprocess
-import os
 
 from fastapi import BackgroundTasks, FastAPI
 

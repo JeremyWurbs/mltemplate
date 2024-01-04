@@ -1,7 +1,7 @@
 """Utility methods to provide unified logging utilities."""
 import logging
-from logging.handlers import RotatingFileHandler
 import os
+from logging.handlers import RotatingFileHandler
 from typing import Optional
 
 from mltemplate import Config

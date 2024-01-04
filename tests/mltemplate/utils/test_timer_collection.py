@@ -1,6 +1,7 @@
 """Unit test methods for mltemplate.utils.timer_collection utility module."""
-import pytest
 import time
+
+import pytest
 
 from mltemplate.utils import TimerCollection
 

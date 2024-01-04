@@ -4,16 +4,16 @@ import os
 import time
 
 import hydra
-from hydra.utils import HydraConfig
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning import Trainer
-from pytorch_lightning.loggers import TensorBoardLogger
 import mlflow
-from omegaconf import DictConfig, OmegaConf
 import torch
+from hydra.utils import HydraConfig
+from omegaconf import DictConfig, OmegaConf
+from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.loggers import TensorBoardLogger
 
 from mltemplate import Config as PackageConfig
-from mltemplate.utils import default_logger, experiment_id, ifnone, LightningModel
+from mltemplate.utils import LightningModel, default_logger, experiment_id, ifnone
 
 torch.set_float32_matmul_precision("medium")
 

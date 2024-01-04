@@ -2,11 +2,11 @@
 import os
 from typing import Optional
 
+import pytorch_lightning as pl
 from torch.utils.data import random_split
 from torch.utils.data.dataloader import DataLoader
 from torchvision import transforms
 from torchvision.datasets.mnist import MNIST
-import pytorch_lightning as pl
 
 from mltemplate import Config
 from mltemplate.utils import ifnone

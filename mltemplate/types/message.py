@@ -1,7 +1,8 @@
 """Message type definition."""
 from dataclasses import dataclass, field
-from PIL.Image import Image
 from typing import List, Optional
+
+from PIL.Image import Image
 
 
 @dataclass
