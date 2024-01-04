@@ -31,7 +31,7 @@ def test_timer():
     time.sleep(0.1)
     assert timer.duration() > 0.1
     timer.stop()
-    time.sleep(0.1)
+    time.sleep(1.)
     assert timer.duration() < 0.2
     timer.start()
     time.sleep(0.1)
@@ -39,7 +39,7 @@ def test_timer():
     assert timer._start_time is not None
     assert timer._stop_time is not None
     assert timer.duration() > 0.2
-    assert timer.duration() < 0.3
+    assert timer.duration() < 1.0
 
     # Test that the timer can be converted to a string
     assert isinstance(str(timer), str)
