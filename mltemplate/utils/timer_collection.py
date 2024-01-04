@@ -37,6 +37,7 @@ class TimerCollection:
             # Timer 3: 0.000s
 
     """
+
     def __init__(self):
         self._timers: Dict[str, Timer] = {}
 
@@ -49,19 +50,19 @@ class TimerCollection:
     def stop(self, name: str):
         """Stop the timer with the given name."""
         if name not in self._timers:
-            raise KeyError(f'Timer {name} does not exist. Unable to stop.')
+            raise KeyError(f"Timer {name} does not exist. Unable to stop.")
         self._timers[name].stop()
 
     def duration(self, name: str) -> float:
         """Get the duration of the timer with the given name."""
         if name not in self._timers:
-            raise KeyError(f'Timer {name} does not exist. Unable to get duration.')
+            raise KeyError(f"Timer {name} does not exist. Unable to get duration.")
         return self._timers[name].duration()
 
     def reset(self, name: str):
         """Reset the timer with the given name."""
         if name not in self._timers:
-            raise KeyError(f'Timer {name} does not exist. Unable to reset.')
+            raise KeyError(f"Timer {name} does not exist. Unable to reset.")
         self._timers[name].reset()
 
     def reset_all(self):
@@ -76,4 +77,4 @@ class TimerCollection:
 
     def __str__(self):
         """Print each timer to the nearest microsecond."""
-        return '\n'.join([f'{name}: {self._timers[name].duration():.6f}s' for name, _ in self._timers.items()])
+        return "\n".join([f"{name}: {self._timers[name].duration():.6f}s" for name, _ in self._timers.items()])

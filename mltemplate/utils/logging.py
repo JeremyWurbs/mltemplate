@@ -9,19 +9,19 @@ from mltemplate.utils import ifnone
 
 
 def default_formatter(fmt: Optional[str] = None, **kwargs) -> logging.Formatter:
-    fmt = ifnone(fmt, default='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fmt = ifnone(fmt, default="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     return logging.Formatter(fmt, **kwargs)
 
 
 def default_logger(
-        name: str,
-        logger_level: Optional[int] = logging.DEBUG,
-        stream_level: Optional[int] = logging.WARN,
-        stream_formatter: Optional[str] = None,
-        file_level: Optional[int] = None,
-        file_formatter: Optional[str] = None,
-        file_name: Optional[str] = None,
-        file_mode: str = 'w'
+    name: str,
+    logger_level: Optional[int] = logging.DEBUG,
+    stream_level: Optional[int] = logging.WARN,
+    stream_formatter: Optional[str] = None,
+    file_level: Optional[int] = None,
+    file_formatter: Optional[str] = None,
+    file_name: Optional[str] = None,
+    file_mode: str = "w",
 ) -> logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(logger_level)
@@ -35,7 +35,7 @@ def default_logger(
 
     if file_level is not None:
         fmt = ifnone(file_formatter, default=default_formatter())
-        file_name = ifnone(file_name, default=os.path.join(Config()['DIR_PATHS']['LOGS'], 'logs.txt'))
+        file_name = ifnone(file_name, default=os.path.join(Config()["DIR_PATHS"]["LOGS"], "logs.txt"))
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
         file_handler = logging.handlers.RotatingFileHandler(file_name, mode=file_mode)
         file_handler.setLevel(file_level)

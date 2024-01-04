@@ -25,10 +25,11 @@ class Timer:
         timer.stop()
         print(f'The timer ran for {timer.duration()} seconds.')  # The timer ran for 2.0000000000000004 seconds.
     """
+
     def __init__(self):
         self._start_time: Optional[float] = None
         self._stop_time: Optional[float] = None
-        self._duration: float = 0.
+        self._duration: float = 0.0
 
     def start(self):
         """Start the timer."""
@@ -52,7 +53,7 @@ class Timer:
         """Reset the timer."""
         self._start_time = None
         self._stop_time = None
-        self._duration = 0.
+        self._duration = 0.0
 
     def __str__(self):
-        return f'{self.duration():.3f}s'
+        return f"{self.duration():.3f}s"

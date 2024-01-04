@@ -25,9 +25,9 @@ def pil_to_ascii(image: Image) -> str:
           decoded_image = ascii_to_pil(ascii_image)
     """
     imageio = io.BytesIO()
-    image.save(imageio, 'png')
+    image.save(imageio, "png")
     bytes_image = base64.b64encode(imageio.getvalue())
-    ascii_image = bytes_image.decode('ascii')
+    ascii_image = bytes_image.decode("ascii")
     return ascii_image
 
 
@@ -59,7 +59,7 @@ def pil_to_bytes(image: Image) -> bytes:
           decoded_image = bytes_to_pil(ascii_image)
     """
     imageio = io.BytesIO()
-    image.save(imageio, 'png')
+    image.save(imageio, "png")
     image_stream = imageio.getvalue()
     return image_stream
 
@@ -119,7 +119,7 @@ def tensor_to_pil(image: torch.Tensor, mode=None, min_val=None, max_val=None) ->
     return F.to_pil_image((image - min_) / (max_ - min_), mode=mode)
 
 
-def pil_to_ndarray(image: Image, image_format='RGB') -> np.ndarray:
+def pil_to_ndarray(image: Image, image_format="RGB") -> np.ndarray:
     """Convert PIL image to numpy ndarray.
 
     If an alpha channel is present, it will automatically be copied over as well.
@@ -131,30 +131,30 @@ def pil_to_ndarray(image: Image, image_format='RGB') -> np.ndarray:
     Returns:
         An np.ndarray image in the specified format.
     """
-    if image.mode in ['LA', 'RGBA']:  # Alpha channel present
-        if image_format == 'L':
-            image = image.convert(mode='L')
+    if image.mode in ["LA", "RGBA"]:  # Alpha channel present
+        if image_format == "L":
+            image = image.convert(mode="L")
             return np.array(image)
         else:
-            image = image.convert(mode='RGBA')
-            if image_format == 'RGB':
+            image = image.convert(mode="RGBA")
+            if image_format == "RGB":
                 return np.array(image)
-            elif image_format == 'BGR':
+            elif image_format == "BGR":
                 return cv2.cvtColor(np.array(image), cv2.COLOR_RGBA2BGRA)
 
     else:  # No alpha channel
-        if image_format == 'L':
-            image = image.convert(mode='L')
+        if image_format == "L":
+            image = image.convert(mode="L")
             return np.array(image)
         else:
-            image = image.convert(mode='RGB')
-            if image_format == 'RGB':
+            image = image.convert(mode="RGB")
+            if image_format == "RGB":
                 return np.array(image)
-            elif image_format == 'BGR':
+            elif image_format == "BGR":
                 return cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
 
-def ndarray_to_pil(image: np.ndarray, image_format: str = 'RGB'):
+def ndarray_to_pil(image: np.ndarray, image_format: str = "RGB"):
     """Convert numpy ndarray to PIL image.
 
     The input image can either be a float array with values in the range [0, 1], an int array with values in the
@@ -182,15 +182,16 @@ def ndarray_to_pil(image: np.ndarray, image_format: str = 'RGB'):
     if np.issubdtype(image.dtype, np.floating):
         image = (image * 255).astype(np.uint8)
     elif not np.issubdtype(image.dtype, np.integer) and image.dtype != bool:
-        raise AssertionError(f'Unknown image dtype {image.dtype}. Expected one of bool, np.floating or np.integer.')
+        raise AssertionError(f"Unknown image dtype {image.dtype}. Expected one of bool, np.floating or np.integer.")
 
     num_channels = image.shape[-1] if image.ndim == 3 else 1
     if num_channels not in [1, 3, 4]:
         raise AssertionError(
-            f'Unknown image format with {num_channels} number of channels. Expected an image with 1, 3 or 4.')
-    elif num_channels == 1 or image_format == 'RGB' or image.dtype == bool:
+            f"Unknown image format with {num_channels} number of channels. Expected an image with 1, 3 or 4."
+        )
+    elif num_channels == 1 or image_format == "RGB" or image.dtype == bool:
         return PIL.Image.fromarray(image)
-    elif image_format == 'BGR':
+    elif image_format == "BGR":
         if num_channels == 3:
             return PIL.Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         elif num_channels == 4:
@@ -218,7 +219,7 @@ def pil_to_cv2(image: Image) -> np.ndarray:
           pil_image = PIL.Image.open('tests/resources/hopper.png')
           cv2_image = pil_to_cv2(pil_image)
     """
-    return pil_to_ndarray(image, image_format='BGR')
+    return pil_to_ndarray(image, image_format="BGR")
 
 
 def cv2_to_pil(image: np.ndarray) -> Image:
@@ -241,4 +242,4 @@ def cv2_to_pil(image: np.ndarray) -> Image:
           cv2_image = cv2.imread('tests/resources/hopper.png')
           pil_image = cv2_to_pil(cv2_image)
     """
-    return ndarray_to_pil(image, image_format='BGR')
+    return ndarray_to_pil(image, image_format="BGR")

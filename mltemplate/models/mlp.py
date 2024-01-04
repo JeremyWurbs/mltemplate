@@ -36,8 +36,8 @@ class MLP(nn.Module):
         dim = ifnone(dim, default=[784, 100, 10])
 
         layers = []
-        for i in range(len(dim)-1):
-            layers.append(nn.Linear(dim[i], dim[i+1]))
+        for i in range(len(dim) - 1):
+            layers.append(nn.Linear(dim[i], dim[i + 1]))
             layers.append(nn.ReLU())
             layers.append(nn.Dropout(dropout))
 
@@ -57,7 +57,7 @@ class MLP(nn.Module):
         elif isinstance(image, Image):
             image = pil_to_tensor(image).type(torch.FloatTensor)
         elif not isinstance(image, torch.Tensor):
-            raise TypeError(f'Expected image to be of type Image, np.ndarray, or torch.Tensor, but got {type(image)}.')
+            raise TypeError(f"Expected image to be of type Image, np.ndarray, or torch.Tensor, but got {type(image)}.")
         prediction = torch.softmax(self.forward(image), dim=1)
         return prediction
 

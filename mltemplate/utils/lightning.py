@@ -14,8 +14,9 @@ class LightningModel(pl.LightningModule):
         self.lr = lr
         self.model = base_model
         self.accuracy_metrics = {
-            step_type: torchmetrics.Accuracy(task='multiclass', num_classes=num_classes)
-            for step_type in ['train', 'val', 'test']}
+            step_type: torchmetrics.Accuracy(task="multiclass", num_classes=num_classes)
+            for step_type in ["train", "val", "test"]
+        }
 
     def __call__(self, *args, **kwargs):
         return self.model(*args, **kwargs)
@@ -34,31 +35,32 @@ class LightningModel(pl.LightningModule):
         x, y = batch
         logits = self.forward(x)
         loss = self.loss(logits, y.view(-1))
-        self.log(f'{step_type}_loss_step', loss, sync_dist=True, prog_bar=True)
+        self.log(f"{step_type}_loss_step", loss, sync_dist=True, prog_bar=True)
         self.log(
-            f'{step_type}_acc_step',
+            f"{step_type}_acc_step",
             self.accuracy_metrics[step_type].to(x.device)(logits, y.view(-1)),
             sync_dist=True,
-            prog_bar=True)
+            prog_bar=True,
+        )
         return loss
 
     def training_step(self, train_batch, _):
-        return self._step(train_batch, 'train')
+        return self._step(train_batch, "train")
 
     def validation_step(self, val_batch, _):
-        return self._step(val_batch, 'val')
+        return self._step(val_batch, "val")
 
     def test_step(self, test_batch, _):
-        return self._step(test_batch, 'test')
+        return self._step(test_batch, "test")
 
     def on_train_epoch_end(self):
-        self.log('train_acc_epoch', self.accuracy_metrics['train'].compute(), sync_dist=True, prog_bar=True)
+        self.log("train_acc_epoch", self.accuracy_metrics["train"].compute(), sync_dist=True, prog_bar=True)
 
     def on_validation_epoch_end(self):
-        self.log('val_acc_epoch', self.accuracy_metrics['val'].compute(), sync_dist=True, prog_bar=True)
+        self.log("val_acc_epoch", self.accuracy_metrics["val"].compute(), sync_dist=True, prog_bar=True)
 
     def on_test_epoch_end(self):
-        self.log('test_acc_epoch', self.accuracy_metrics['test'].compute(), sync_dist=True, prog_bar=True)
+        self.log("test_acc_epoch", self.accuracy_metrics["test"].compute(), sync_dist=True, prog_bar=True)
 
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.lr)

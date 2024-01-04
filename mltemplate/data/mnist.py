@@ -48,24 +48,26 @@ class MNISTDataModule(pl.LightningDataModule):
         trainer.fit(model, dm)
 
     """
+
     config = Config()
 
     def __init__(
-            self,
-            batch_size: int = 64,
-            num_workers: int = 0,
-            num_train: int = 55000,
-            num_val: int = 5000,
-            pin_memory: bool = False,
-            data_dir: Optional[str] = None,
-            **_):
+        self,
+        batch_size: int = 64,
+        num_workers: int = 0,
+        num_train: int = 55000,
+        num_val: int = 5000,
+        pin_memory: bool = False,
+        data_dir: Optional[str] = None,
+        **_,
+    ):
         super().__init__()
         self.batch_size = batch_size
         self.num_workers = num_workers if num_workers is not None else max(os.cpu_count() // 2, 1)
         self.num_train = num_train
         self.num_val = num_val
         self.pin_memory = pin_memory
-        self.data_dir = ifnone(data_dir, default=self.config['DIR_PATHS']['DATA'])
+        self.data_dir = ifnone(data_dir, default=self.config["DIR_PATHS"]["DATA"])
 
         self.train = None
         self.val = None
@@ -79,25 +81,28 @@ class MNISTDataModule(pl.LightningDataModule):
         MNIST(self.data_dir, train=False, download=False)
 
     def setup(self, stage: Optional[str] = None):
-        transform = transforms.Compose([transforms.ToTensor(),
-                                        transforms.Normalize((0.1307,), (0.3081,))])
+        transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
         self.train, self.val = random_split(
-            MNIST(self.data_dir, train=True, transform=transform), [self.num_train, self.num_val])
+            MNIST(self.data_dir, train=True, transform=transform), [self.num_train, self.num_val]
+        )
         self.test = MNIST(self.data_dir, train=False, transform=transform)
 
     def train_dataloader(self):
         return DataLoader(
-            self.train, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=self.pin_memory)
+            self.train, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=self.pin_memory
+        )
 
     def val_dataloader(self):
         return DataLoader(
-            self.val, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=self.pin_memory)
+            self.val, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=self.pin_memory
+        )
 
     def test_dataloader(self):
         return DataLoader(
-            self.test, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=self.pin_memory)
+            self.test, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=self.pin_memory
+        )
 
-    def sample(self, stage: str = 'train', idx: int = 0):
+    def sample(self, stage: str = "train", idx: int = 0):
         """Return a sample from the dataset.
 
         Args:
@@ -107,11 +112,11 @@ class MNISTDataModule(pl.LightningDataModule):
         Returns:
             A sample from the dataset as an (image, label) tuple.
         """
-        if stage == 'train':
+        if stage == "train":
             return self.train[idx]
-        elif stage == 'val':
+        elif stage == "val":
             return self.val[idx]
-        elif stage == 'test':
+        elif stage == "test":
             return self.test[idx]
         else:
-            raise ValueError(f'Invalid stage: {stage}. Must be one of: train, val, test.')
+            raise ValueError(f"Invalid stage: {stage}. Must be one of: train, val, test.")

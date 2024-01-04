@@ -27,5 +27,5 @@ def instantiate_target(target: str):
 
         print(type(mnist))  # <class 'mltemplate.data.mnist.MNISTDataModule'>
     """
-    module_name, class_name = target.rsplit('.', 1)
+    module_name, class_name = target.rsplit(".", 1)
     return dynamic_instantiation(module_name, class_name)

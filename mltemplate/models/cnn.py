@@ -27,6 +27,7 @@ class CNN(nn.Module):
         print(f'label: {label}, prediction: {prediction}')
 
     """
+
     def __init__(self, channels=1, height=28, width=28, num_classes=10, **_):
         super().__init__()
         self.height = height
@@ -53,7 +54,7 @@ class CNN(nn.Module):
         elif isinstance(image, Image):
             image = pil_to_tensor(image).type(torch.FloatTensor)
         elif not isinstance(image, torch.Tensor):
-            raise TypeError(f'Expected image to be of type Image, np.ndarray, or torch.Tensor, but got {type(image)}.')
+            raise TypeError(f"Expected image to be of type Image, np.ndarray, or torch.Tensor, but got {type(image)}.")
         prediction = torch.softmax(self.forward(image), dim=1)
         return prediction
 

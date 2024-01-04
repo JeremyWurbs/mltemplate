@@ -27,9 +27,10 @@ class Registry(MltemplateBase):
         for model in registry.models:
             print(model)
     """
+
     def __init__(self, tracking_server_uri: Optional[str] = None):
         super().__init__()
-        tracking_server_uri = ifnone(tracking_server_uri, default=self.config['DIR_PATHS']['MLFLOW'])
+        tracking_server_uri = ifnone(tracking_server_uri, default=self.config["DIR_PATHS"]["MLFLOW"])
         mlflow.set_tracking_uri(tracking_server_uri)
         self.client = MlflowClient(tracking_uri=tracking_server_uri)
         self.mlflow = self.MLFlow(tracking_uri=tracking_server_uri)
@@ -49,19 +50,18 @@ class Registry(MltemplateBase):
         for registered_model in self.client.search_registered_models():
             for version in self.client.search_model_versions(f"name='{registered_model.name}'"):
                 run = self.client.get_run(run_id=version.run_id)
-                params = json.loads(run.data.params['model'].replace('\'', '\"'))
+                params = json.loads(run.data.params["model"].replace("'", '"'))
                 models[version.run_id] = {
-                    'name': registered_model.name,
-                    'version': str(version.version),
-                    'dataset': run.data.params['dataset_name'],
-                    'status': version.status,
-                    'train_acc': run.data.metrics.get('train_acc_epoch', 0.),
-                    'val_acc': run.data.metrics.get('val_acc_epoch', 0.),
-                    'test_acc': run.data.metrics.get('test_acc_epoch', 0.),
-                    'params': {key: params[key]
-                               for key in params.keys() - {'_target_', 'name'}},
-                    'experiment_id': run.info.experiment_id,
-                    'run_id': version.run_id
+                    "name": registered_model.name,
+                    "version": str(version.version),
+                    "dataset": run.data.params["dataset_name"],
+                    "status": version.status,
+                    "train_acc": run.data.metrics.get("train_acc_epoch", 0.0),
+                    "val_acc": run.data.metrics.get("val_acc_epoch", 0.0),
+                    "test_acc": run.data.metrics.get("test_acc_epoch", 0.0),
+                    "params": {key: params[key] for key in params.keys() - {"_target_", "name"}},
+                    "experiment_id": run.info.experiment_id,
+                    "run_id": version.run_id,
                 }
         return models
 
@@ -69,28 +69,26 @@ class Registry(MltemplateBase):
         """Helper method to fetch the names of all experiments in the registry."""
         experiments = {}
         for experiment in self.client.search_experiments():
-            if experiment.name != 'Default':
-                experiments[experiment.experiment_id] = {
-                    'name': experiment.name
-                }
+            if experiment.name != "Default":
+                experiments[experiment.experiment_id] = {"name": experiment.name}
         return experiments
 
     def model_name(self, run_id: str) -> str:
-        return self.models[run_id]['name']
+        return self.models[run_id]["name"]
 
     def model_versions(self, model_name: str) -> List[str]:
-        return [model['version'] for model in self.models.values() if model['name'] == model_name]
+        return [model["version"] for model in self.models.values() if model["name"] == model_name]
 
     def model_name_and_version(self, run_id: str) -> str:
         model = self.models.get(run_id)
         if model is None:
-            raise ValueError(f'No model found with run_id: {run_id}')
+            raise ValueError(f"No model found with run_id: {run_id}")
         return f'{model["name"]}/{model["version"]}'
 
     @property
     def experiment_names(self) -> List[str]:
         """Returns the names of all experiments in the registry."""
-        return [experiment['name'] for experiment in self.experiments.values()]
+        return [experiment["name"] for experiment in self.experiments.values()]
 
     @property
     def experiment_ids(self) -> List[str]:
@@ -106,8 +104,12 @@ class Registry(MltemplateBase):
         self.refresh()
         if len(self.models) == 0 or experiment_id not in self.experiment_ids:
             return None
-        run_id = max(self.models, key=(lambda key: self.models[key]['test_acc']
-                                       if self.models[key]['experiment_id'] == experiment_id else -1.))
+        run_id = max(
+            self.models,
+            key=(
+                lambda key: self.models[key]["test_acc"] if self.models[key]["experiment_id"] == experiment_id else -1.0
+            ),
+        )
         return self.models.get(run_id)
 
     def best_model_for_experiment_name(self, experiment_name: str) -> Dict:
@@ -118,8 +120,8 @@ class Registry(MltemplateBase):
     def run_id_from_request_id(self, request_id: str) -> Optional[str]:
         """Returns the run_id associated with the specified request_id or None, if one is not found or not finished."""
         for run in self.client.search_runs(self.experiment_ids):
-            if run.data.tags.get('request_id') == request_id:
-                if run.info.status == 'FINISHED':
+            if run.data.tags.get("request_id") == request_id:
+                if run.info.status == "FINISHED":
                     return run.info.run_id
                 else:
                     return None
@@ -131,6 +133,7 @@ class Registry(MltemplateBase):
         These methods have been split into a separate class because they are not used by the backend and would be
         deleted in a release version of the package. They are included here for demonstration purposes with the demo.
         """
+
         def __init__(self, tracking_uri: str):
             super().__init__()
             self.client = MlflowClient(tracking_uri=tracking_uri)
@@ -139,8 +142,8 @@ class Registry(MltemplateBase):
             """Returns the names and ids of all experiments in the registry."""
             experiments = []
             for experiment in self.client.search_experiments():
-                if experiment.name != 'Default' or include_default:
-                    experiments.append({'name': experiment.name, 'id': experiment.experiment_id})
+                if experiment.name != "Default" or include_default:
+                    experiments.append({"name": experiment.name, "id": experiment.experiment_id})
             return experiments
 
         def fetch_runs(self, experiments: Optional[Union[str, List[str]]] = None) -> List[Dict[str, Any]]:
@@ -148,14 +151,15 @@ class Registry(MltemplateBase):
             if isinstance(experiments, str):
                 experiment_ids = [self.client.get_experiment_by_name(experiments).experiment_id]
             elif isinstance(experiments, list):
-                experiment_ids = [self.client.get_experiment_by_name(experiment).experiment_id
-                                  for experiment in experiments]
+                experiment_ids = [
+                    self.client.get_experiment_by_name(experiment).experiment_id for experiment in experiments
+                ]
             else:
-                experiment_ids = [experiment['id'] for experiment in self.fetch_experiments()]
+                experiment_ids = [experiment["id"] for experiment in self.fetch_experiments()]
 
             runs = []
             for run in self.client.search_runs(experiment_ids=experiment_ids):
-                runs.append({'run_id': run.info.run_id, 'metrics': run.data.metrics})
+                runs.append({"run_id": run.info.run_id, "metrics": run.data.metrics})
             return runs
 
         def fetch_models(self) -> List[Dict[str, Any]]:
@@ -164,5 +168,6 @@ class Registry(MltemplateBase):
             for registered_model in self.client.search_registered_models():
                 for version in self.client.search_model_versions(f"name='{registered_model.name}'"):
                     models.append(
-                        {'model': registered_model.name, 'version': version.version, 'run_id': version.run_id})
+                        {"model": registered_model.name, "version": version.version, "run_id": version.run_id}
+                    )
             return models
