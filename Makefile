@@ -34,7 +34,7 @@ fmt:              ## Format code using black & isort.
 .PHONY: lint
 lint:             ## Run pylint, isort & black linters.
 	$(ENV_PREFIX)pylint mltemplate/
-	$(ENV_PREFIX)pylint tests/
+	$(ENV_PREFIX)pylint --disable=protected-access tests/
 	${ENV_PREFIX}isort -l 120 --check mltemplate/
 	${ENV_PREFIX}isort -l 120 --check tests/
 	$(ENV_PREFIX)black -l 120 --check mltemplate/
