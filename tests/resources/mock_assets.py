@@ -7,30 +7,31 @@ import numpy as np
 
 class MockAssets:
     """Class containing mock assets for unit tests."""
-    image_path = 'tests/resources/hopper.png'
-    mask_path = 'tests/resources/hopper_mask.png'
-    audio_path = 'tests/resources/write_a_fond_note.mp3'
-    image = Image.open(image_path).convert('RGB')  # 1024x768 portrait image
-    image_mask = Image.open(mask_path).convert('L')  # 1024x768 mask to image
-    image_large = Image.open('tests/resources/hopper_large.png').convert('RGB')  # 2048x1536 image
-    image_square = Image.open('tests/resources/hopper_square.png').convert('RGB')  # 1024x1024 image
-    image_background = Image.open('tests/resources/office_in_a_small_city.png').convert('RGB')  # background image
-    prompt = 'An astronaut riding a horse'
+
+    image_path = "tests/resources/hopper.png"
+    mask_path = "tests/resources/hopper_mask.png"
+    audio_path = "tests/resources/write_a_fond_note.mp3"
+    image = Image.open(image_path).convert("RGB")  # 1024x768 portrait image
+    image_mask = Image.open(mask_path).convert("L")  # 1024x768 mask to image
+    image_large = Image.open("tests/resources/hopper_large.png").convert("RGB")  # 2048x1536 image
+    image_square = Image.open("tests/resources/hopper_square.png").convert("RGB")  # 1024x1024 image
+    image_background = Image.open("tests/resources/office_in_a_small_city.png").convert("RGB")  # background image
+    prompt = "An astronaut riding a horse"
 
     @property
     def image_rgba(self) -> Image:
         """Returns RGBA version of MockAssets.image."""
         rgba = self.image.copy()
         rgba.putalpha(self.image_mask)
-        assert rgba.mode == 'RGBA'
+        assert rgba.mode == "RGBA"
         return rgba
 
     @property
     def image_la(self) -> Image:
         """Returns LA version of MockAssets.image."""
-        la = self.image.copy().convert('LA')
+        la = self.image.copy().convert("LA")
         la.putalpha(self.image_mask)
-        assert la.mode == 'LA'
+        assert la.mode == "LA"
         return la
 
     @property
@@ -70,6 +71,6 @@ class MockAssets:
     def image_float32_ndarray(self) -> np.ndarray:
         """Returns a numpy float32 ndarray image."""
         uint8_ndarray = self.image_uint8_ndarray
-        fp32_ndarray = (uint8_ndarray / 255.).astype(np.float32)
+        fp32_ndarray = (uint8_ndarray / 255.0).astype(np.float32)
         assert fp32_ndarray.dtype == np.float32
         return fp32_ndarray

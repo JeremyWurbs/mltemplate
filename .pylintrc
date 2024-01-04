@@ -66,6 +66,7 @@ disable=abstract-method,
         cmp-method,
         coerce-builtin,
         coerce-method,
+        cyclic-import,
         delslice-method,
         div-method,
         duplicate-code,
@@ -298,6 +299,7 @@ notes=TODO
 
 # LOCAL_EDIT: Allow the use of f-strings in logging.
 disable=logging-fstring-interpolation
+
 
 [STRING]
 

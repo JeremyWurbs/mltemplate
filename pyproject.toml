@@ -30,6 +30,7 @@ requires-python = ">= 3.10"
 hello = "mltemplate:hello"
 train = "mltemplate.scripts.train:entry"
 mltemplate_setup = "mltemplate_setup:initial_mltemplate_setup"
+gateway_server_app = "mltemplate.backend.gateway.server:app"
 
 [build-system]
 requires = ["hatchling"]
@@ -47,19 +48,23 @@ dev-dependencies = [
     "sphinx-simplepdf>=1.6.0",
     "black>=23.12.1",
     "isort>=5.13.2",
-    "mypy>=1.8.0",
 ]
 
 [tool.rye.scripts]
-lint = {chain = ["echo:lint", "lint:pylint", "echo:black:mltemplate", "lint:black:mltemplate", "echo:black:tests", "lint:black:tests", "echo:mypy", "lint:black:tests"]}
-"echo:lint" = "echo 'pylint mltemplate/'"
-"lint:pylint" = "pylint mltemplate/"
-"echo:black:mltemplate" = "echo '\nblack -l 120 --check mltemplate/'"
-"lint:black:mltemplate" = "black -l 120 --check mltemplate/"
-"echo:black:tests" = "echo '\nblack -l 120 --check tests/'"
-"lint:black:tests" = "black -l 120 --check tests/"
-"echo:mypy" = "echo '\nmypy --ignore-missing-imports mltemplate/'"
-"lint:mypy" = "mypy --ignore-missing-imports mltemplate/"
+lint = {chain = ["echo:pylint:mltemplate", "lint:pylint:mltemplate", "echo:pylint:tests", "lint:pylint:tests", "echo:black:check:mltemplate", "lint:black:check:mltemplate", "echo:black:check:tests", "lint:black:check:tests"]}
+"echo:pylint:mltemplate" = "echo 'pylint mltemplate/'"
+"lint:pylint:mltemplate" = "pylint mltemplate/"
+"echo:pylint:tests" = "echo 'pylint --disable=protected-access tests/'"
+"lint:pylint:tests" = "pylint --disable=protected-access tests/"
+"echo:black:check:mltemplate" = "echo '\nblack -l 120 --check mltemplate/'"
+"lint:black:check:mltemplate" = "black -l 120 --check mltemplate/"
+"echo:black:check:tests" = "echo '\nblack -l 120 --check tests/'"
+"lint:black:check:tests" = "black -l 120 --check tests/"
+format = {chain = ["echo:black:format:mltemplate", "format:black:format:mltemplate", "echo:black:format:tests", "format:black:format:tests"] }
+"echo:black:format:mltemplate" = "echo '\nblack -l 120 mltemplate/'"
+"format:black:format:mltemplate" = "black -l 120 mltemplate/"
+"echo:black:format:tests" = "echo '\nblack -l 120 tests/'"
+"format:black:format:tests" = "black -l 120 tests/"
 test = {chain = ["echo:test", "test:pytest"]}
 "echo:test" = "echo 'pytest -rs --cov=mltemplate --maxfail=1 --cov-report term-missing -W ignore::DeprecationWarning tests/'"
 "test:pytest" = "pytest -rs --cov=mltemplate --maxfail=1 --cov-report term-missing -W ignore::DeprecationWarning tests/"

@@ -37,7 +37,7 @@ def default_logger(
         fmt = ifnone(file_formatter, default=default_formatter())
         file_name = ifnone(file_name, default=os.path.join(Config()["DIR_PATHS"]["LOGS"], "logs.txt"))
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
-        file_handler = logging.handlers.RotatingFileHandler(file_name, mode=file_mode)
+        file_handler = RotatingFileHandler(file_name, mode=file_mode)
         file_handler.setLevel(file_level)
         file_handler.setFormatter(fmt)
         logger.addHandler(file_handler)

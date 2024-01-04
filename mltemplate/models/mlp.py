@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from lunit.utils import ifnone, pil_to_tensor
+from mltemplate.utils import ifnone, pil_to_tensor
 
 
 class MLP(nn.Module):
@@ -19,8 +19,8 @@ class MLP(nn.Module):
 
     Example::
 
-        from lunit.data import MNIST
-        from lunit.models import MLP
+        from mltemplate.data import MNIST
+        from mltemplate.models import MLP
 
         mnist = MNIST()
         model = MLP(dim=[784, 100, 10])

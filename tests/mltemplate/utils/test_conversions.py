@@ -4,8 +4,18 @@ import pytest
 
 import numpy as np
 
-from mltemplate.utils import (pil_to_ascii, ascii_to_pil, pil_to_bytes, bytes_to_pil, pil_to_tensor,
-                                     tensor_to_pil, pil_to_ndarray, ndarray_to_pil, pil_to_cv2, cv2_to_pil)
+from mltemplate.utils import (
+    pil_to_ascii,
+    ascii_to_pil,
+    pil_to_bytes,
+    bytes_to_pil,
+    pil_to_tensor,
+    tensor_to_pil,
+    pil_to_ndarray,
+    ndarray_to_pil,
+    pil_to_cv2,
+    cv2_to_pil,
+)
 from tests import MockAssets, images_are_identical
 
 mocks = MockAssets()
@@ -30,12 +40,12 @@ def test_tensor_conversion(image: Image = mocks.image):
 
 
 def test_ndarray_conversion(
-        image: Image = mocks.image,
-        image_rgba: Image = mocks.image_rgba,
-        image_float32_ndarray: np.ndarray = mocks.image_float32_ndarray,
-        image_ndarray_bgr: np.ndarray = mocks.image_ndarray_bgr,
-        image_ndarray_bgra: np.ndarray = mocks.image_ndarray_bgra):
-
+    image: Image = mocks.image,
+    image_rgba: Image = mocks.image_rgba,
+    image_float32_ndarray: np.ndarray = mocks.image_float32_ndarray,
+    image_ndarray_bgr: np.ndarray = mocks.image_ndarray_bgr,
+    image_ndarray_bgra: np.ndarray = mocks.image_ndarray_bgra,
+):
     # Test normal 'RGB' usage
     ndarray_image = pil_to_ndarray(image)
     pil_image = ndarray_to_pil(ndarray_image)
@@ -57,11 +67,11 @@ def test_ndarray_conversion(
         assert isinstance(pil_image, Image)
 
     # Test BGR image
-    pil_image = ndarray_to_pil(image_ndarray_bgr, image_format='BGR')
+    pil_image = ndarray_to_pil(image_ndarray_bgr, image_format="BGR")
     assert images_are_identical(image, pil_image)
 
     # Test BGRA image
-    pil_image = ndarray_to_pil(image_ndarray_bgra, image_format='BGR')
+    pil_image = ndarray_to_pil(image_ndarray_bgra, image_format="BGR")
     assert images_are_identical(image_rgba, pil_image)
 
     # Test that an exception is thrown if the input image does not have 1, 3 or 4 channels
@@ -73,14 +83,11 @@ def test_ndarray_conversion(
     # Test that an exception is thrown if the input format is not 'RGB' or 'BGR'
     with pytest.raises(Exception):
         hsv_image = np.zeros(shape=(100, 100, 3), dtype=np.float32)
-        pil_image = ndarray_to_pil(hsv_image, image_format='HSV')
+        pil_image = ndarray_to_pil(hsv_image, image_format="HSV")
         assert isinstance(pil_image, Image)
 
 
-def test_cv2_conversion(
-        image: Image = mocks.image,
-        image_rgba: Image = mocks.image_rgba):
-
+def test_cv2_conversion(image: Image = mocks.image, image_rgba: Image = mocks.image_rgba):
     # Test normal 'RGB' usage
     cv2_image = pil_to_cv2(image)
     pil_image = cv2_to_pil(cv2_image)

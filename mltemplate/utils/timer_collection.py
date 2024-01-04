@@ -67,8 +67,7 @@ class TimerCollection:
 
     def reset_all(self):
         """Reset all timers."""
-        for name, _ in self._timers.items():
-            timer = self._timers[name]
+        for timer in self._timers.values():
             timer.reset()
 
     def names(self):
@@ -77,4 +76,4 @@ class TimerCollection:
 
     def __str__(self):
         """Print each timer to the nearest microsecond."""
-        return "\n".join([f"{name}: {self._timers[name].duration():.6f}s" for name, _ in self._timers.items()])
+        return "\n".join([f"{name}: {timer.duration():.6f}s" for name, timer in self._timers.items()])

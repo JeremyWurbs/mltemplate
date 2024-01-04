@@ -1,5 +1,4 @@
 """Unit test methods for mltemplate.utils.timer utility module."""
-
 import time
 
 from mltemplate.utils import Timer
@@ -25,7 +24,7 @@ def test_timer():
     timer.reset()
     assert timer._start_time is None
     assert timer._stop_time is None
-    assert timer.duration() == 0.
+    assert timer.duration() == 0.0
 
     # Test that the timer can be started and stopped multiple times
     timer.start()

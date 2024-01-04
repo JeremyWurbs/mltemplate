@@ -20,15 +20,17 @@ class Server(MltemplateBase):
 
     code::
 
-        $ python -m gunicorn -w 1 -b localhost:8081 -k uvicorn.workers.UvicornWorker mltemplate.backend.training.server:app
+        $ python -m gunicorn -w 1 -b localhost:8081 -k uvicorn.workers.UvicornWorker \
+            mltemplate.backend.training.server:app
 
     """
+
     logger = default_logger(
-        name='mltemplate.backend.training.server.Server',
+        name="mltemplate.backend.training.server.Server",
         stream_level=logging.INFO,
         file_level=logging.DEBUG,
-        file_name=os.path.join(Config()['DIR_PATHS']['LOGS'], 'training_server_logs.txt'),
-        file_mode='a'
+        file_name=os.path.join(Config()["DIR_PATHS"]["LOGS"], "training_server_logs.txt"),
+        file_mode="a",
     )
 
     def __init__(self):
@@ -36,34 +38,36 @@ class Server(MltemplateBase):
 
     @staticmethod
     def train_background_task(payload: TrainingRunInput):
-        Server.logger.debug(f'Server processing train_background_task (id: {payload.request_id}) with payload: {payload}')
+        Server.logger.debug(
+            f"Server processing train_background_task (id: {payload.request_id}) with payload: {payload}"
+        )
         command_line_arguments = payload.command_line_arguments + f' request_id="{payload.request_id}"'
         arguments = shlex.split(command_line_arguments)
-        if '--multirun' in arguments:  # Make sure multiruns is the last argument, if given
-            arguments.remove('--multirun')
-            arguments.append('--multirun')
-        Server.logger.debug(f'train_background_task (id: {payload.request_id}) arguments: {arguments}')
+        if "--multirun" in arguments:  # Make sure multiruns is the last argument, if given
+            arguments.remove("--multirun")
+            arguments.append("--multirun")
+        Server.logger.debug(f"train_background_task (id: {payload.request_id}) arguments: {arguments}")
         try:
-            _ = subprocess.run(['train', *arguments], check=True, capture_output=True)
+            _ = subprocess.run(["train", *arguments], check=True, capture_output=True)
         except subprocess.CalledProcessError as e:
-            Server.logger.error(f'Server failed processing train_background_task (id: {payload.request_id}) with error: '
-                              f'{e}')
+            Server.logger.error(
+                f"Server failed processing train_background_task (id: {payload.request_id}) with error: " f"{e}"
+            )
             raise e
-        Server.logger.debug(
-            f'Server finished processing train_background_task (id: {payload.request_id}).')
+        Server.logger.debug(f"Server finished processing train_background_task (id: {payload.request_id}).")
 
     def app(self):
-        _app = FastAPI()
+        app_ = FastAPI()
 
-        @_app.post('/start_training_run')
+        @app_.post("/start_training_run")
         def start_training_run(payload: TrainingRunInput, background_tasks: BackgroundTasks):
-            self.logger.debug(f'Server received request for start_training_run with payload: {payload}')
+            self.logger.debug(f"Server received request for start_training_run with payload: {payload}")
             background_tasks.add_task(self.train_background_task, payload)
-            response = 'Server received request for start_training_run'
-            self.logger.debug(f'Server returning response for start_training_run: {response}')
+            response = "Server received request for start_training_run"
+            self.logger.debug(f"Server returning response for start_training_run: {response}")
             return response
 
-        return _app
+        return app_
 
     @classmethod
     def connection(cls, host):
@@ -76,7 +80,7 @@ def app():
         name=server.name,
         stream_level=logging.INFO,
         file_level=logging.DEBUG,
-        file_name=os.path.join(server.config['DIR_PATHS']['LOGS'], 'training_server_logs.txt')
+        file_name=os.path.join(server.config["DIR_PATHS"]["LOGS"], "training_server_logs.txt"),
     )
-    server.logger.info(f'Starting Training Server {id(server)}.')
+    server.logger.info(f"Starting Training Server {id(server)}.")
     return server.app()

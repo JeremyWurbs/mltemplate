@@ -13,8 +13,8 @@ class ChatInput(BaseModel):
 
 
 class ClassifyIDInput(BaseModel):
-    dataset: str = 'MNIST'
-    stage: str = 'test'
+    dataset: str = "MNIST"
+    stage: str = "test"
     idx: int = 0
     model: Optional[str] = None
 
@@ -36,4 +36,4 @@ class LoadModelInput(BaseModel):
 
 class TrainInput(BaseModel):
     request_id: str
-    command_line_arguments: str = '--config-name train.yaml model=mlp dataset=mnist'
+    command_line_arguments: str = "--config-name train.yaml model=mlp dataset=mnist"

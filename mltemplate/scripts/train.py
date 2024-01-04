@@ -50,7 +50,7 @@ def main(config: DictConfig):
             mlflow.log_param("dataset_name", config.dataset.name)  # Explicitly log the dataset being trained on
             mlflow.log_params(OmegaConf.to_container(config, resolve=True))  # Make config param searchable in MLFlow UI
             mlflow.log_artifacts(config_dir, artifact_path="config")  # Save the actual config (yaml) files as artifacts
-            mlflow.set_experiment_tag("_dataset_", config.dataset._target_)
+            mlflow.set_experiment_tag("_dataset_", config.dataset._target_)  # pylint: disable=W0212
 
             # If the caller wishes to track this run through multiple levels of abstraction (e.g. the discord client
             # passing through an end user request), they can pass a request_id to track this run through the registry
@@ -82,6 +82,7 @@ def main(config: DictConfig):
 
     except Exception as err:
         logger.error(f"An exception occurred during training: {err}")
+        raise err
 
     logger.debug(
         f"Training run for (request_id: {request_id}, run_id: {mlflow.last_active_run().info.run_id}) has "
@@ -92,8 +93,8 @@ def main(config: DictConfig):
 
 def entry():
     """Required entry point to enable hydra to work as a console_script."""
-    main()
+    main()  # pylint: disable=E1120
 
 
 if __name__ == "__main__":
-    main()
+    main()  # pylint: disable=E1120
