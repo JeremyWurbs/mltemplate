@@ -7,11 +7,12 @@ An end-to-end starter template for machine learning projects.
 
 Click the green `Use this template` button on the top right of this page to create a new repository from this template.
 Name the new repository and give it a description, then click `Create repository` (works for both public and private
-repos). Wait for the repository to be created and the first workflow to run, which will rename and update the project. 
+repos).  
 
 ![New Repo](./resources/new_repo.png)
 
-Once done, refresh the page and follow the instructions to install your new project!
+Wait for the repository to be created and the first workflow to run, which will rename and update the project. Once 
+done, refresh the page and follow the instructions to install your new project!
 
 ![Init Complete](./resources/init_complete.png)
 

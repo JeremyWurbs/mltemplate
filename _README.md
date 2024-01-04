@@ -8,7 +8,7 @@ $ git clone git@github.com:JeremyWurbs/mltemplate.git && cd mltemplate
 ```
 
 You may use standard python tools (pip) as desired, but it is recommended to use 
-[Rye](https://github.com/mitsuhiko/rye) (recommended), in which case all you need to do is:
+[Rye](https://github.com/mitsuhiko/rye), in which case all you need to do is:
 
 ```commandline
 $ rye sync
@@ -16,10 +16,24 @@ $ rye sync
 
 # Usage
 
-Rye will handle your virtual environment and dependencies for you. There are a number of useful commands available, 
-which you can use through `rye run <command>`:
+Run the demo with:
 
-To lint your code with [pylint](https://www.pylint.org/), [isort](https://pycqa.github.io/isort/) and [black]():
+```commandline
+$ rye run demo
+```
+
+This will train a simple MLP model on the MNIST dataset, tracking the training run through MLflow and exposing training 
+logs Tensorboard. The model will be saved to the (MLFlow) model registry when training finishes. 
+
+# Package Management
+
+Rye will handle your virtual environment and dependencies for you. There are a number of useful commands available, 
+which you can use through `rye run <command>`.
+
+## Linting
+
+To lint your code with [pylint](https://www.pylint.org/), [isort](https://pycqa.github.io/isort/) and 
+[black](https://github.com/psf/black):
 
 ```commandline
 $ rye run lint
@@ -50,7 +64,9 @@ All done! ✨ 🍰 ✨
 14 files would be left unchanged.
 ```
 
-To run unit tests with [pytest](https://docs.pytest.org/en/6.2.x/):
+## Unit Tests
+
+To run unit tests with [pytest](https://docs.pytest.org/en/):
 
 ```commandline
 $ rye run test
@@ -64,11 +80,7 @@ plugins: cov-4.1.0, anyio-4.2.0, hydra-core-1.3.2
 collected 13 items                                                             
 
 tests/mltemplate/core/test_config.py ...                                 [ 23%]
-tests/mltemplate/core/test_registry.py s                                 [ 30%]
-tests/mltemplate/utils/test_checks.py .                                  [ 38%]
-tests/mltemplate/utils/test_conversions.py .....                         [ 76%]
-tests/mltemplate/utils/test_logging.py .                                 [ 84%]
-tests/mltemplate/utils/test_timer.py .                                   [ 92%]
+...
 tests/mltemplate/utils/test_timer_collection.py .                        [100%]
 
 ---------- coverage: platform linux, python 3.11.6-final-0 -----------
@@ -87,6 +99,8 @@ SKIPPED [1] tests/mltemplate/core/test_registry.py:12: No runs found in MLflow.
 
 
 ```
+
+## Auto-formatting
 
 To auto-format your code with [isort](https://pycqa.github.io/isort/) and [black](https://github.com/psf/black):
 
@@ -108,7 +122,38 @@ All done! ✨ 🍰 ✨
 14 files left unchanged.
 ```
 
+## Building the Docs
+
+Build the docs using [sphinx](https://www.sphinx-doc.org/en/master/):
+
+```commandline
+$ rye run docs
+```
+
+Both HTML and PDF docs will be built, located in `docs/_build/html` and `docs/_build/simplepdf` respectively.
+
+## Building the Package
+
+```commandline
+rye build
+```
+
+```text
+building mltemplate
+* Creating virtualenv isolated environment...
+* Installing packages in isolated environment... (hatchling)
+* Getting build dependencies for sdist...
+* Building sdist...
+* Building wheel from sdist
+* Creating virtualenv isolated environment...
+* Installing packages in isolated environment... (hatchling)
+* Getting build dependencies for wheel...
+* Building wheel...
+Successfully built mltemplate-0.1.0.tar.gz and mltemplate-0.1.0-py3-none-any.whl
+```
+
+## Continuous Integration
+
 You have a starter CI workflow in [.github/workflows/ci.yml](.github/workflows/ci.yml) that will lint and test your 
 project on Linux/MacOS/Windows. By default they will run with every push / pull request and can be accessed directly 
 from [GithubActions](https://github.com/JeremyWurbs/mltemplate/actions). 
-
