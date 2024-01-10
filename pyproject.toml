@@ -98,6 +98,9 @@ format = {chain = [
 test = {chain = ["echo:test", "test:pytest"]}
 "echo:test" = "echo 'pytest -rs --cov=mltemplate --maxfail=1 --cov-report term-missing -W ignore::DeprecationWarning tests/'"
 "test:pytest" = "pytest -rs --cov=mltemplate --maxfail=1 --cov-report term-missing -W ignore::DeprecationWarning tests/"
+graph-dependencies = {chain = ["echo:dependency-graph", "dependency-graph:mltemplate"]}
+"echo:dependency-graph" = "echo 'pyreverse -o png --colorized --max-color-depth 3 --no-standalone mltemplate'"
+"dependency-graph:mltemplate" = "pyreverse -o png --colorized --max-color-depth 3 --no-standalone mltemplate"
 
 [tool.hatch.metadata]
 allow-direct-references = true
