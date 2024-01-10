@@ -23,12 +23,12 @@ class TrainingServer(MltemplateBase):
     code::
 
         $ python -m gunicorn -w 1 -b localhost:8081 -k uvicorn.workers.UvicornWorker \
-            mltemplate.backend.training.server:app
+            mltemplate.backend.training.training_server:app
 
     """
 
     logger = default_logger(
-        name="mltemplate.backend.training.server.Server",
+        name="mltemplate.backend.training.training_server.TrainingServer",
         stream_level=logging.INFO,
         file_level=logging.DEBUG,
         file_name=os.path.join(Config()["DIR_PATHS"]["LOGS"], "training_server_logs.txt"),
@@ -40,23 +40,24 @@ class TrainingServer(MltemplateBase):
 
     @staticmethod
     def train_background_task(payload: TrainingRunInput):
-        Server.logger.debug(
+        TrainingServer.logger.debug(
             f"Server processing train_background_task (id: {payload.request_id}) with payload: {payload}"
         )
         command_line_arguments = payload.command_line_arguments + f' request_id="{payload.request_id}"'
-        arguments = shlex.split(command_line_arguments)
+        arguments = ["run", "train"]
+        arguments += shlex.split(command_line_arguments)
         if "--multirun" in arguments:  # Make sure multiruns is the last argument, if given
             arguments.remove("--multirun")
             arguments.append("--multirun")
-        Server.logger.debug(f"train_background_task (id: {payload.request_id}) arguments: {arguments}")
+        TrainingServer.logger.debug(f"train_background_task (id: {payload.request_id}) arguments: {arguments}")
         try:
-            _ = subprocess.run(["train", *arguments], check=True, capture_output=True)
+            _ = subprocess.run(["rye", *arguments], check=True, capture_output=True)
         except subprocess.CalledProcessError as e:
-            Server.logger.error(
+            TrainingServer.logger.error(
                 f"Server failed processing train_background_task (id: {payload.request_id}) with error: " f"{e}"
             )
             raise e
-        Server.logger.debug(f"Server finished processing train_background_task (id: {payload.request_id}).")
+        TrainingServer.logger.debug(f"Server finished processing train_background_task (id: {payload.request_id}).")
 
     def app(self):
         app_ = FastAPI()
@@ -77,7 +78,7 @@ class TrainingServer(MltemplateBase):
 
 
 def app():
-    server = Server()
+    server = TrainingServer()
     server.logger = default_logger(
         name=server.name,
         stream_level=logging.INFO,

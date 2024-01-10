@@ -52,7 +52,11 @@ class DiscordClient(MltemplateBase):
         self.intents.members = True
         self.intents.message_content = True
 
-        self.server_commands = self.gateway_server.commands()
+        try:
+            self.server_commands = self.gateway_server.commands()
+        except Exception as err:
+            self.logger.exception(f"Error raised in fetching server commands:\n{err}")
+            self.server_commands = None
         self.supported_commands = [
             "list_commands",
             "train",

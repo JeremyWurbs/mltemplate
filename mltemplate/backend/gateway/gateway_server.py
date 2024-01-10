@@ -227,7 +227,7 @@ class GatewayServer(MltemplateBase):
 
 
 def app():
-    server = Server()
+    server = GatewayServer()
     server.logger = default_logger(
         name=server.name,
         stream_level=logging.INFO,
