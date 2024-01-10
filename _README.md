@@ -136,6 +136,32 @@ $ rye run docs
 
 Both HTML and PDF docs will be built, located in `docs/_build/html` and `docs/_build/simplepdf` respectively.
 
+## Dependency Graph
+
+To generate a dependency graph of the project, use pylint and [graphviz](https://graphviz.org/). Make sure graphviz is 
+installed:
+
+```commandline 
+apt-get install graphviz
+```
+
+And then run:
+
+```commandline
+rye run graph-dependencies
+```
+
+Which should generate two files in the root directory: 
+
+*packages.png*:
+![Packages](resources/packages.png)
+
+and *classes.png*:
+![Classes](resources/classes.png)
+
+You may use these graphs to help get a quick overview of the project, delete superfluous code and avoid circular 
+dependencies.
+
 ## Building the Package
 
 ```commandline
