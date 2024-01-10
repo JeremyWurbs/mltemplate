@@ -9,8 +9,6 @@ import torch
 from PIL.Image import Image
 from torchvision.transforms.v2 import functional as F
 
-from mltemplate.utils import ifnone
-
 
 def pil_to_ascii(image: Image) -> str:
     """Serialize PIL Image to ascii.
@@ -114,8 +112,8 @@ def tensor_to_pil(image: torch.Tensor, mode=None, min_val=None, max_val=None) ->
         tensor_image = pil_to_tensor(image)
         pil_image = tensor_to_pil(tensor_image)
     """
-    min_ = ifnone(min_val, default=torch.min(image))
-    max_ = ifnone(max_val, default=torch.max(image))
+    min_ = min_val if min_val is not None else torch.min(image)
+    max_ = max_val if max_val is not None else torch.max(image)
     return F.to_pil_image((image - min_) / (max_ - min_), mode=mode)
 
 

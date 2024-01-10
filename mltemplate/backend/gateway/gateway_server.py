@@ -11,23 +11,23 @@ from fastapi import FastAPI, HTTPException
 from pytorch_lightning import LightningDataModule
 
 from mltemplate import MltemplateBase, Registry
-from mltemplate.backend.gateway import (
+from mltemplate.backend.gateway.types import (
     BestModelForExperimentInput,
     ChatInput,
     ClassifyIDInput,
     ClassifyImageInput,
-    GatewayConnection,
     ListRunsInput,
     LoadModelInput,
     TrainInput,
 )
+from mltemplate.backend.gateway.connection_client import ConnectionClient as GatewayConnection
 from mltemplate.backend.training import TrainingServer
 from mltemplate.data import MNIST
 from mltemplate.types import Message
 from mltemplate.utils import ascii_to_pil, default_logger, pil_to_ascii, pil_to_ndarray, tensor_to_pil
 
 
-class Server(MltemplateBase):
+class GatewayServer(MltemplateBase):
     """Mltemplate Gateway Server
 
     The Mltemplate Gateway Server provides a unified interface for communicating with the Mltemplate backend. It is used

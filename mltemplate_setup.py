@@ -16,9 +16,12 @@ def initial_mltemplate_setup():
             os.makedirs(dir_path)
             new_dirs.append(dir_path)
 
-    logger = default_logger(name=__name__, file_level=logging.INFO)
-    for dir in new_dirs:
-        logger.info(f'Created new directory: {dir}')
+    logger = default_logger(
+        name=__name__,
+        file_level=logging.INFO,
+        file_name=os.path.join(config['DIR_PATHS']['LOGS'], 'mltemplate_setup_logs.txt'))
+    for dir_ in new_dirs:
+        logger.info(f'Created new directory: {dir_}')
 
 
 if __name__ == '__main__':

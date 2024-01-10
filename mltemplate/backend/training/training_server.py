@@ -9,11 +9,12 @@ import subprocess
 from fastapi import BackgroundTasks, FastAPI
 
 from mltemplate import Config, MltemplateBase
-from mltemplate.backend.training import TrainingConnection, TrainingRunInput
+from mltemplate.backend.training.connection_client import ConnectionClient as TrainingConnection
+from mltemplate.backend.training.types import TrainingRunInput
 from mltemplate.utils import default_logger
 
 
-class Server(MltemplateBase):
+class TrainingServer(MltemplateBase):
     """Mltemplate Training Server
 
     The Mltemplate Training Server provides a unified interface for starting training runs. It is used by the gateway

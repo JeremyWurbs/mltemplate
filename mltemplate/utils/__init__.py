@@ -16,5 +16,4 @@ from mltemplate.utils.dynamic import instantiate_target
 from mltemplate.utils.lightning import LightningModel
 from mltemplate.utils.logging import default_logger
 from mltemplate.utils.mlflow import experiment_id
-from mltemplate.utils.timer import Timer
-from mltemplate.utils.timer_collection import TimerCollection
+from mltemplate.utils.timer import Timer, TimerCollection

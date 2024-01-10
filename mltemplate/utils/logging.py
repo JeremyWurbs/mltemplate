@@ -4,12 +4,9 @@ import os
 from logging.handlers import RotatingFileHandler
 from typing import Optional
 
-from mltemplate import Config
-from mltemplate.utils import ifnone
-
 
 def default_formatter(fmt: Optional[str] = None, **kwargs) -> logging.Formatter:
-    fmt = ifnone(fmt, default="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    fmt = fmt if fmt is not None else "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     return logging.Formatter(fmt, **kwargs)
 
 
@@ -27,15 +24,17 @@ def default_logger(
     logger.setLevel(logger_level)
 
     if stream_level is not None:
-        fmt = ifnone(stream_formatter, default=default_formatter())
+        fmt = stream_formatter if stream_formatter is not None else default_formatter()
         stream_handler = logging.StreamHandler()
         stream_handler.setLevel(stream_level)
         stream_handler.setFormatter(fmt)
         logger.addHandler(stream_handler)
 
     if file_level is not None:
-        fmt = ifnone(file_formatter, default=default_formatter())
-        file_name = ifnone(file_name, default=os.path.join(Config()["DIR_PATHS"]["LOGS"], "logs.txt"))
+        fmt = file_formatter if file_formatter is not None else default_formatter()
+        if file_name is None:
+            raise ValueError("file_name must be specified if file_level is not None.")
+        #file_name = file_name if file_name is not None else os.path.join(Config()["DIR_PATHS"]["LOGS"], "logs.txt")
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
         file_handler = RotatingFileHandler(file_name, mode=file_mode)
         file_handler.setLevel(file_level)
