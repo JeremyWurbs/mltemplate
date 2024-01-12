@@ -1,3 +1,5 @@
+[![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/mitsuhiko/rye/main/artwork/badge.json)](https://rye-up.com)
+
 # Mltemplate
 An end-to-end starter template for machine learning projects.
 
@@ -30,13 +32,13 @@ modular, so if you don't need a particular component, you can simply delete it. 
 - - [x] Example `pl.LightningDataModule` MNIST dataset
 - - [x] Example end-to-end training script
 
-- Model registry and deployment
+- Model registry and deployment:
 - - [x] [MLflow](https://mlflow.org/) for model registry
 - - [x] [FastAPI](https://fastapi.tiangolo.com/) for model deployment backend
 - - [x] [Discord](https://discord.com/) for model deployment front-end
 - - [x] [Docker](https://www.docker.com/) for containerization
 
-- Project Management
+- Project Management:
 - - [x] [Rye](https://github.com/mitsuhiko/rye) integration for end-to-end environment management
 - - [x] [Github Actions](https://github.com/JeremyWurbs/mltemplate/actions) CI/CD workflows
 - - [x] [pylint](https://www.pylint.org/), [isort](https://pycqa.github.io/isort/) and [black](https://black.readthedocs.io/en/stable/) for code formatting and linting
