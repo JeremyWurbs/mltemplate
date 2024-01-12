@@ -67,8 +67,8 @@ The individual stages can be built and cached separately, and are described belo
 
 ## GPU (Nvidia) Support
 
-To build containers with GPU support, follow the instructions in the [GPU Support](#GPU-Support) section above, and 
-then build an nvidia/cuda image from the Nvidia Dockerfile that matches your OS and CUDA version.
+To build containers with GPU support, follow the instructions in the GPU Support section above, and then build an 
+nvidia/cuda image from the Nvidia Dockerfile that matches your OS and CUDA version.
 
 The Nvidia Dockerfile for Ubuntu 22.04 / CUDA 12.2.2 is included in this repository 
 ([docker/nvidia_12.2.2/Dockerfile](docker/nvidia_12.2.2/Dockerfile)). If you are using a different OS or CUDA version, 
@@ -135,7 +135,7 @@ Which may be used to automate the testing of the dockerized application.
 
 ## Backend Image
 
-Finally, the backend stage can be used to run automatically run all the required backend servers to run the package 
+Finally, the backend stage can be used to automatically run all the required backend servers to run the package 
 application. It may be built with:
 
 ```commandline
@@ -156,8 +156,8 @@ docker run --gpus all mltemplate:backend
 
 ## Docker Compose 
 
-You may further configure the deployment environment by through the [provied Docker Compose file](docker-compose.yml).
-To use it, navigate to the docker directory and run:
+To configure the deployment servers, adapt the [provided Docker Compose file](docker-compose.yml) as desired. Then run
+the following from the docker directory to start the servers:
 
 ```commandline
 docker-compose up
