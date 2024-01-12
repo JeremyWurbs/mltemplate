@@ -16,23 +16,16 @@ $ rye sync
 
 # Usage
 
-Run the demo with:
+![Discord Demo](./resources/demo.png)
 
-```commandline
-$ rye run demo
-```
-
-This will train a simple MLP model on the MNIST dataset, tracking the training run through MLflow and exposing training 
-logs to Tensorboard. The model will be saved to the (MLFlow) model registry when training finishes, which can be 
-subsequently deployed through the FastAPI backend.
-
-For running the end-to-end demo (which requires a 10-minute discord server setup), refer to the 
-[end-to-end demo](#End-to-End-Demo) section below.
+To run the end-to-end demo, refer to the [end-to-end demo](#End-to-End-Demo) section below. It requires a 10-minute 
+discord setup.
 
 # Package Management
 
-Rye will handle your virtual environment and dependencies for you. There are a number of useful commands available, 
-which you can use through `rye run <command>`.
+It is highly recommended to use Rye as your package manager. In addition to handling your virtual environment and 
+dependencies for you, there are additionally a number of useful commands available, which you can use through 
+`rye run <command>`.
 
 ## Linting
 
@@ -335,4 +328,4 @@ docker compose up
 
 Once the backend servers are up and running, you may showcase your demo application through your discord server. 
 
-![Discord Demo](./resources/discord_sample.png)
+![Discord Demo](./resources/demo.png)

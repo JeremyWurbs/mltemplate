@@ -1,6 +1,7 @@
-[![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/mitsuhiko/rye/main/artwork/badge.json)](https://rye-up.com)
-
 # Mltemplate
+
+![Discord Demo](./resources/demo.png)
+
 An end-to-end starter template for machine learning projects.
 
 # How to use
