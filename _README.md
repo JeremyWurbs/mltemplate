@@ -190,4 +190,149 @@ from [GithubActions](https://github.com/JeremyWurbs/mltemplate/actions).
 
 # End-to-End Demo
 
-TODO: Add a demo of the discord bot here.
+## Set up your front-end deployment
+
+The end-to-end demo uses Discord as the front-end deployment environment, as it is generally very easy to set up a 
+new discord server and associated bot for deployment. Indeed, many companies have used Discord as a deployment 
+environment for their products at scale to great success (e.g. consider 
+[Midjourney](https://sandundayananda.medium.com/why-midjourney-uses-discord-188da3612d64)). 
+
+First, [create a new discord server](https://support.discord.com/hc/en-us/articles/204849977-How-do-I-create-a-server-), 
+and then create an [associated new discord bot](https://discordpy.readthedocs.io/en/stable/discord.html). Add the bot to 
+your server as instructed. 
+
+Finally, add your discord bot token to your [config.ini](mltemplate/core/config.ini) file under API_KEYS/DISCORD. You may 
+find this key by going to the [discord developer portal](https://discord.com/developers/applications) and navigating to 
+the `Bot` tab. Click on `Reset Token` and then copy/paste the new token to your config.ini file.
+
+Congrats! Your application now has a front-end deployment environment!
+
+## (Optional) Set up GPT
+
+While not absolutely necessary, the demo is set up to incorporate GPT for end-client ease-of-use. By default, it will 
+be used as a general chat agent for anyone DMing the bot, and can be prompted more directly by setting its system 
+prompt. More, as a concrete example, a sample `debug` command is provided, which will pass the server logs to GPT in an 
+effort to get it to provide debug advice on any errors. 
+
+If you have not, sign up and log into the [OpenAI Developer Platform](https://platform.openai.com/) and then navigate to 
+your [API keys](https://platform.openai.com/api-keys). Create a new key and copy/paste it into your 
+[config.ini](mltemplate/core/config.ini) file under API_KEYS/OPENAI.
+
+## Start the backend servers
+
+![Discord Architecture](./resources/mltemplate_architecture.png)
+
+The demo includes a relatively sophisticated end-to-end deployment architecture. While it has many components, they are 
+all modular and meant to be able to put on separate machines, as appropriate, to scale to an actual production 
+environment.
+
+The backend consists of the following servers:
+
+1. **MLFlow Tracking and Registry Server**. The MLFlow server is used to track experiments and store models in the
+registry;
+2. **Training Server** (Optional). The training server is used to train models and store them in the registry; it is 
+only needed if you wish to train models from discord (i.e. use the `>train` command in discord). It is not needed to 
+train models locally.
+3. **Discord Client**. The discord client receives requests from the discord channel and forwards them to the backend 
+to be processed;
+4. **Gateway Server**. The gateway server is used to serve models from the registry. It accepts any user requests not 
+processed by the discord client (i.e. all requests relating to model inference/training and the model registry). 
+Under the hood it communicates with the MLFlow and Training servers, as appropriate;
+5. **Tensorboard** (Optional). Tensorboard is used to monitor training progress. It is not accessible from the discord 
+client, but can be accessed directly through a local browser. It is only needed if you wish to monitor training 
+progress.
+
+All servers may be run locally, and may be started as described below.
+
+Notes:
+  - If you choose different ports for the servers, you will need to update the hosts listed in your 
+[config.ini](mltemplate/core/config.ini) file to match, or pass them in as command line arguments to each other server. 
+  - The default configs assume that output data (MLFlow registry, hydra training runs, tensorboard logs, standard 
+debug logs, etc.) will be stored in `${HOME}/mltemplate` and, for unit tests, that the project has been installed in `
+${HOME}/projects/mltemplate`. If you wish to change these locations, you will need to update the same 
+[config.ini](mltemplate/core/config.ini) file accordingly. 
+  - The number of workers on the training server (`-w 4`) determines how many simultaneous training runs may be done. 
+If you set the number too high you may run out of memory. In practice, you will likely want to run the training server 
+in a completely separate environment, and configure each training job to get a separate GPU. 
+  - If, at any point, you get an error saying `mltemplate` cannot be found, remember to add the mltemplate path to your 
+PYTHONPATH variable. E.g. 
+
+```commandline
+PYTHONPATH=${HOME}/projects/mltemplate [... continue command]
+```
+
+1. Start the MLFlow Tracking and Registry server:
+
+```commandline
+mlflow server --backend-store-uri ${HOME}/mltemplate/mlflow --port 8080
+```
+
+Or, with Rye:
+
+```commandline
+rye run mlflow_server
+```
+
+Once the MLFlow server is up and running, you may get local access by opening a browser to its address:
+
+![MLFlow Model Registry](./resources/mlflow_model_registry.png)
+
+2. Start the Gateway server:
+
+```commandline
+python -m gunicorn -w 1 -b localhost:8081 -k uvicorn.workers.UvicornWorker "mltemplate.backend.gateway.gateway_server:app()"
+```
+
+Or, with Rye:
+
+```commandline 
+rye run gateway_server
+```
+
+3. Start the Training server:
+
+```commandline
+python -m gunicorn -w 4 -b localhost:8082 -k uvicorn.workers.UvicornWorker "mltemplate.backend.training.training_server:app()"
+```
+
+Or, with Rye:
+
+```commandline 
+rye run training_server
+```
+
+4. Start the Discord client:
+
+```commandline
+python mltemplate/backend/discord/discord_client.py
+```
+
+Or, with Rye:
+
+```commandline
+rye run discord_client
+```
+
+5. (Optional) Start Tensorboard:
+
+```commandline
+tensorboard --logdir ${HOME}/mltemlpate/tensorboard
+```
+
+![Tensorboard Example](./resources/tensorboard_sample.png)
+
+### Advanced Deployment
+
+For a more streamlined deployment, follow the instructions in the [docker readme](docker/README.md), in which case you 
+may configure the deployment through a single [Docker Compose](docker/docker-compose.yml) file. Then all the backend 
+servers can be deployed with a single Docker Compose call from the docker directory:
+
+```commandline
+docker compose up
+```
+
+## Demo Showcase
+
+Once the backend servers are up and running, you may showcase your demo application through your discord server. 
+
+![Discord Demo](./resources/discord_sample.png)
