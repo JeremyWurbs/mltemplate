@@ -1,0 +1,15 @@
+services:
+  backend:
+    build: ./mltemplate
+    ports:
+      - "5000:5000"
+      - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
