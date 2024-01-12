@@ -10,21 +10,22 @@ import numpy as np
 from fastapi import FastAPI, HTTPException
 from pytorch_lightning import LightningDataModule
 
-from mltemplate import MltemplateBase, Registry
+from mltemplate import MltemplateBase
 from mltemplate.backend.gateway.types import (
     BestModelForExperimentInput,
     ChatInput,
     ClassifyIDInput,
     ClassifyImageInput,
-    ListRunsInput,
+    DebugInput,
     LoadModelInput,
     TrainInput,
 )
 from mltemplate.backend.gateway.connection_client import ConnectionClient as GatewayConnection
 from mltemplate.backend.training import TrainingServer
 from mltemplate.data import MNIST
+from mltemplate.modules import GPT, Registry
 from mltemplate.types import Message
-from mltemplate.utils import ascii_to_pil, default_logger, pil_to_ascii, pil_to_ndarray, tensor_to_pil
+from mltemplate.utils import ascii_to_pil, default_logger, ifnone, pil_to_ascii, pil_to_ndarray, tensor_to_pil
 
 
 class GatewayServer(MltemplateBase):
@@ -58,14 +59,13 @@ class GatewayServer(MltemplateBase):
             "commands",
             "models",
             "load-model",
-            "classify-by-id",
-            "list-experiments",
-            "list-runs",
-            "list-models",
-            "best-model-for-experiment",
+            "classify-by-id"
         ]
+        self.gpt = None
         if "XXXXXXXXXX" not in self.config["API_KEYS"]["OPENAI"]:
+            self.gpt = GPT()
             self.commands.append("chat")
+            self.commands.append("debug")
 
         # TODO: Make Registry save and load datasets dynamically for us, instead of hardcoding them here
         self.loaded_datasets: Dict[str, LightningDataModule] = {"MNIST": MNIST()}
@@ -100,43 +100,35 @@ class GatewayServer(MltemplateBase):
 
         @app_.post("/chat")
         def chat(payload: ChatInput):
-            # TODO
             self.logger.debug(f"Server received request for chat with payload: {payload}")
-            response = Message(sender="mltemplate", text="Sorry, I don't know how to chat yet.")
+            if self.gpt is not None:
+                response = self.gpt(payload.text)
+            else:
+                response = Message(sender="mltemplate", text="Sorry, I don't know how to chat yet.")
             self.logger.debug(f"Server returning response for chat: {response}")
             return {"sender": response.sender, "text": response.text}
 
         @app_.post("/models")
         def models():
+            self.logger.debug("Received models request.")
             self.registry.refresh()
-            return list(self.registry.models.values())
+            model_list = list(self.registry.models.values())
+            self.logger.debug(f"Returning models request with data: {model_list}.")
+            return model_list
 
-        @app_.post("/fetch-experiments")
-        def fetch_experiments():
-            self.logger.debug("Received fetch_experiments request.")
-            experiments = self.registry.mlflow.fetch_experiments()
-            self.logger.debug(f"Returning list_experiments request with data: {experiments}.")
-            return experiments
+        @app_.post("/experiments")
+        def experiments():
+            self.logger.debug("Received experiments request.")
+            self.registry.refresh()
+            experiment_list = self.registry.experiment_names
+            self.logger.debug(f"Returning experiments request with data: {experiment_list}.")
+            return experiment_list
 
-        @app_.post("/fetch-runs")
-        def fetch_runs(payload: ListRunsInput):
-            self.logger.debug(f"Received fetch_runs request with payload: {payload}.")
-            runs = self.registry.mlflow.fetch_runs(payload.experiment_name)
-            self.logger.debug(f"Returning list_runs request with data: {runs}.")
-            return runs
-
-        @app_.post("/fetch-models")
-        def fetch_models():
-            self.logger.debug("Received fetch_models request.")
-            models = self.registry.mlflow.fetch_models()
-            self.logger.debug(f"Returning list_models request with data: {models}.")
-            return models
-
-        @app_.post("/best-model-for-experiment")
+        @app_.post('/best-model-for-experiment')
         def best_model_for_experiment(payload: BestModelForExperimentInput):
-            self.logger.debug(f"Received best_model_for_experiment request with payload: {payload}.")
+            self.logger.debug(f'Received best_model_for_experiment request with payload: {payload}.')
             model = self.registry.best_model_for_experiment_name(payload.experiment_name)
-            self.logger.debug(f"Returning best_model_for_experiment request with data: {model}.")
+            self.logger.debug(f'Returning best_model_for_experiment request with data: {model}.')
             return model
 
         @app_.post("/load-model")
@@ -150,9 +142,9 @@ class GatewayServer(MltemplateBase):
             if payload.run_id is not None:
                 try:
                     model_name_and_version = self.registry.model_name_and_version(payload.run_id)
-                except ValueError as e:  # If the model is not found in the registry
-                    self.logger.error(e)
-                    raise HTTPException(status_code=400, detail=str(e)) from e
+                except ValueError as err:  # If the model is not found in the registry
+                    self.logger.error(err)
+                    raise HTTPException(status_code=400, detail=str(err)) from err
             else:
                 model_name_and_version = f"{payload.model}/{payload.version}"
 
@@ -218,6 +210,40 @@ class GatewayServer(MltemplateBase):
             self.registry.refresh()
             self.logger.debug("Returning training_complete request.")
             return True
+
+        @app_.post("/debug")
+        def debug(payload: DebugInput):
+            self.logger.debug(f"Received debug request with payload {payload}.")
+
+            discord_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "discord_logs.txt")
+            gateway_server_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "gateway_server_logs.txt")
+            training_server_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "training_server_logs.txt")
+            training_logfile =  os.path.join(self.config["DIR_PATHS"]["LOGS"], "train_logs.txt")
+
+            log_files = []
+            if os.path.exists(discord_logfile):
+                log_files.append(discord_logfile)
+            if os.path.exists(gateway_server_logfile):
+                log_files.append(gateway_server_logfile)
+            if os.path.exists(training_server_logfile):
+                log_files.append(training_server_logfile)
+            if os.path.exists(training_logfile):
+                log_files.append(training_logfile)
+
+            instructions = \
+                ("You are a professional python developer. You're job is to help debug the application servers for the "
+                 f"mltemplate project. You will talk with the mltemplate application developers and answer their "
+                 f"questions. You have access to the following log files: {log_files}.\n\n"
+                 f"Use the provided log files to provide useful debugging information to developer queries.")
+            try:
+                with GPT(filenames=log_files, instructions=instructions) as gpt:
+                    text = ifnone(payload.text, default="Please help me debug the most recent command I ran.")
+                    response = gpt(text)
+                self.logger.debug(f"Returning debug request with response:\n{response}")
+                return response
+            except Exception as err:
+                self.logger.error(err)
+                raise HTTPException(status_code=400, detail=str(err)) from err
 
         return app_
 

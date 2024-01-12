@@ -11,8 +11,9 @@ import discord
 import requests
 from discord.ext import commands, tasks
 
-from mltemplate import Config, MltemplateBase, Registry
+from mltemplate import Config, MltemplateBase
 from mltemplate.backend.gateway import GatewayServer
+from mltemplate.modules import Registry
 from mltemplate.utils import bytes_to_pil, default_logger, ifnone
 
 
@@ -54,21 +55,21 @@ class DiscordClient(MltemplateBase):
 
         try:
             self.server_commands = self.gateway_server.commands()
-        except Exception as err:
+        except requests.exceptions.ConnectionError as err:
             self.logger.exception(f"Error raised in fetching server commands:\n{err}")
             self.server_commands = None
         self.supported_commands = [
             "list_commands",
             "train",
             "registry_summary",
-            "list_models",
-            "list_experiments",
-            "list_runs",
-            "best_model_for_experiment",
             "load_model",
             "classify_id",
             "classify_image",
             "logs",
+        ]
+        self.gpt_commands = [
+            "chat",
+            "debug"
         ]
 
     def discord_bot(self):
@@ -84,8 +85,8 @@ class DiscordClient(MltemplateBase):
             summary += "```\n"
             summary += "The best model for each experiment:\n"
             summary += f'```{"Model":12} {"Version":12} {"Dataset":12} {"TestAccuracy":15} {"Run ID":30}\n'
-            for experiment in self.gateway_server.list_experiments():
-                model = self.gateway_server.best_model_for_experiment(experiment_name=experiment["name"])
+            for experiment in self.gateway_server.experiments():
+                model = self.gateway_server.best_model_for_experiment(experiment_name=experiment)
                 if model is not None:
                     summary += f'{model["name"]:12} {model["version"]:12} {model["dataset"]:12} '
                     summary += f'{model["test_acc"]:.4f}{"":<9} '
@@ -141,15 +142,22 @@ class DiscordClient(MltemplateBase):
                         f"Hello! If you're trying to chat with me, you can chat with me freely by DMing me. You may "
                         f"also run any of my commands in any channel:\n\n"
                         f"command prefixes: {self.command_prefixes}\n"
-                        f"commands: {self.supported_commands}\n\n"
-                        f"For example, you may get a summary of the models available for use with:\n"
+                        f"base commands: {self.supported_commands}\n"
+                        f"gpt-based commands: {self.gpt_commands}\n\n"
+                        f"For example, you may list all my commands with:\n"
+                        f">list_commands\n\n"
+                        f"I can do things like train and deploy models for you to use. For example:\n"
+                        f">train --config-name train.yaml model=mlp dataset=mnist\n\n"
+                        f"You may then get a summary of all models available for use with:\n"
                         f">registry_summary\n\n"
-                        f"You may then load a model with:\n"
+                        f"You may then load and deploy a model with:\n"
                         f">load_model MLP 1\n\n"
-                        f"And finally classify an image, either by sample ID:\n"
+                        f"In this case, the model may be run, either by test sample ID:\n"
                         f">classify_id 100\n\n"
-                        f"Or by uploading an image and using:\n"
+                        f"Or by uploading an your own image and using:\n"
                         f">classify_image\n\n"
+                        f"If you have enabled GPT, you may also chat freely with me, either through DM or by command:\n"
+                        f">chat Hello, tell me a joke about AI\n\n"
                     )
                     await message.reply(response, mention_author=True)
                     self.logger.debug(f"Returning channel message from user {message.author}.")
@@ -161,6 +169,8 @@ class DiscordClient(MltemplateBase):
             self.logger.debug(f"Received list_commands request from user {ctx.author}.")
             message = "Sure. I know the following commands, and can chat freely through DMs:\n"
             message += " ".join([f"\n\t`>{command}`" for command in self.supported_commands])
+            message += "\n\nI also know the following GPT commands, which can be used by enabling GPT:\n"
+            message += " ".join([f"\n\t`>{command}`" for command in self.gpt_commands])
             message += "\n\nYou may DM me for further help in using my commands."
             self.logger.debug(f"Returning list_commands request for user {ctx.author}:\n{message}")
             await ctx.send(message)
@@ -187,55 +197,6 @@ class DiscordClient(MltemplateBase):
                 dict_writer.writerows(models)
             self.logger.debug(f"Returning registry_summary request for user {ctx.author}:\n{summary}")
             await ctx.send(file=discord.File(filename))
-
-        @bot.command()
-        async def list_models(ctx):
-            self.logger.debug(f"Received list_models request from user {ctx.author}.")
-            models = self.gateway_server.list_models()
-            msg = f'```{"Model":<12} {"Version":<12} {"Run ID":<32}\n'
-            for model in models:
-                msg += f'{model["model"]:<12} '
-                msg += f'{int(model["version"]):<12} '
-                msg += f'{model["run_id"]:32}\n'
-            msg += "```"
-            self.logger.debug(f"Returning list_models request for user {ctx.author}:\n{models}")
-            await ctx.send(msg)
-
-        @bot.command()
-        async def list_experiments(ctx):
-            self.logger.debug(f"Received list_experiments request from user {ctx.author}.")
-            experiments = self.gateway_server.list_experiments()
-            msg = f'```{"Experiment":12} {"Experiment ID":32}\n'
-            for experiment in experiments:
-                msg += f'{experiment["name"]:<12} '
-                msg += f'{experiment["id"]:<32}\n'
-            msg += "```"
-            self.logger.debug(f"Returning list_experiments request for user {ctx.author}:\n{msg}")
-            await ctx.send(msg)
-
-        @bot.command()
-        async def list_runs(ctx):
-            self.logger.debug(f"Received list_runs request from user {ctx.author}.")
-            runs = self.gateway_server.list_runs()
-            print(runs[0]["metrics"].keys())
-            msg = f'```{"Run ID":<32} {"Train Accuracy":<15} {"Val Accuracy":<15} {"Test Accuracy":<15}\n'
-            for run in runs:
-                msg += (
-                    f'{run["run_id"]:<32} '
-                    f'{run["metrics"].get("train_acc_epoch", 0.):<15.4f} '
-                    f'{run["metrics"].get("val_acc_epoch", 0.):<15.4f} '
-                    f'{run["metrics"].get("test_acc_epoch", 0.):<15.4f}\n'
-                )
-            msg += "```"
-            self.logger.debug(f"Returning list_runs request for user {ctx.author}:\n{msg}")
-            await ctx.send(msg)
-
-        @bot.command()
-        async def best_model_for_experiment(ctx, experiment_name: str):
-            self.logger.debug(f"Received best_model_for_experiment request from user {ctx.author}.")
-            model = self.gateway_server.best_model_for_experiment(experiment_name)
-            self.logger.debug(f"Returning best_model_for_experiment request for user {ctx.author}:\n{model}")
-            await ctx.send(model)
 
         @bot.command()
         async def load_model(
@@ -319,11 +280,6 @@ class DiscordClient(MltemplateBase):
             DiscordClient.training_requests.append({"request_id": ctx.message.id, "ctx": ctx})
             msg = "Sure, I've started working on the training request and will let you know when it finishes."
             await ctx.send(msg)
-            # msg = 'Training has finished. The registry has been updated with the training results.\n\n'
-            # models = self.gateway_server.models()
-            # msg += model_summary(models)
-            # self.logger.debug(f'Returning train request for user {ctx.author}:\n{msg}')
-            # await ctx.send(msg)
 
         @tasks.loop(seconds=15.0)
         async def check_training_jobs():
@@ -384,6 +340,26 @@ class DiscordClient(MltemplateBase):
                 self.logger.exception(f"Error raised in sending train logs:\n{err}")
                 raise err
             self.logger.debug(f"Returning logs request for user {ctx.author}.")
+
+        @bot.command()
+        async def debug(ctx, *, text: str):
+            self.logger.debug(f"Received debug request from user {ctx.author} with text: {text}.")
+            response = self.gateway_server.debug(text=text)
+            max_len = 2000
+            num_chunks = max(ceil(len(response.text) / max_len), 1)
+            for idx in range(num_chunks):
+                start = idx * max_len
+                end = (idx + 1) * max_len
+                await ctx.send(response.text[start:end])
+            if len(response.images) > 0:
+                for image in response.images:
+                    filename = os.path.join(self.config["DIR_PATHS"]["TEMP"], "image.png")
+                    image.save(filename)
+                    with open(filename, "rb") as image_bytes:
+                        discord_image = discord.File(image_bytes)
+                        await ctx.send(file=discord_image)
+                    await ctx.send(file=filename)
+            self.logger.debug(f"Returning debug request for user {ctx.author} with response:\n{response}")
 
         return bot
 

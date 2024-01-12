@@ -35,36 +35,15 @@ class ConnectionClient:
             raise HTTPException(response.status_code, response.content)
         return json.loads(response.content)
 
-    def list_experiments(self):
-        response = requests.request("POST", self.host + "fetch-experiments", timeout=60)
-        if response.status_code != 200:
-            raise HTTPException(response.status_code, response.content)
-        return json.loads(response.content)
-
-    def list_runs(self, experiment: Optional[str] = None):
-        response = requests.request(
-            "POST",
-            self.host + "fetch-runs",
-            json={"experiment": experiment},
-            timeout=60,
-        )
-        if response.status_code != 200:
-            raise HTTPException(response.status_code, response.content)
-        return json.loads(response.content)
-
-    def list_models(self):
-        response = requests.request("POST", self.host + "fetch-models", timeout=60)
+    def experiments(self) -> List[str]:
+        response = requests.request("POST", self.host + "experiments", timeout=60)
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)
         return json.loads(response.content)
 
     def best_model_for_experiment(self, experiment_name: str):
         response = requests.request(
-            "POST",
-            self.host + "best-model-for-experiment",
-            json={"experiment_name": experiment_name},
-            timeout=60,
-        )
+            'POST', self.host + 'best-model-for-experiment', json={'experiment_name': experiment_name}, timeout=60)
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)
         return json.loads(response.content)
@@ -131,6 +110,14 @@ class ConnectionClient:
                 "command_line_arguments": command_line_arguments,
             },
             timeout=24 * 60 * 60,
+        )
+        if response.status_code != 200:
+            raise HTTPException(response.status_code, response.content)
+        return json.loads(response.content)
+
+    def debug(self, text: Optional[str] = None):
+        response = requests.request(
+            "POST", self.host + "debug", json={"text": text}, timeout=60
         )
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)

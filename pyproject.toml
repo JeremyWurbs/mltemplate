@@ -22,6 +22,7 @@ dependencies = [
     "numpy>=1.26.2",
     "opencv-python>=4.9.0.80",
     "matplotlib>=3.8.2",
+    "openai>=1.7.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"
@@ -30,7 +31,7 @@ requires-python = ">= 3.10"
 hello = "mltemplate:hello"
 train = "mltemplate.scripts.train:entry"
 mltemplate_setup = "mltemplate_setup:initial_mltemplate_setup"
-gateway_server_app = "mltemplate.backend.gateway.server:app"
+gateway_server_app = "mltemplate.backend.gateway.gateway_server:app"
 discord_client = "mltemplate.backend.discord.discord_client:run_discord_client"
 
 [build-system]

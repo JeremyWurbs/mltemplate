@@ -24,8 +24,8 @@ class ClassifyImageInput(BaseModel):
     model: Optional[str] = None
 
 
-class ListRunsInput(BaseModel):
-    experiment_name: Optional[str] = None
+class DebugInput(BaseModel):
+    text: Optional[str] = None
 
 
 class LoadModelInput(BaseModel):
