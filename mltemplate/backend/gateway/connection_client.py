@@ -121,4 +121,5 @@ class ConnectionClient:
         )
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)
-        return json.loads(response.content)
+        data = json.loads(response.content)
+        return Message(sender=data["sender"], text=data["text"])

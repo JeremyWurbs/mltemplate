@@ -342,7 +342,7 @@ class DiscordClient(MltemplateBase):
             self.logger.debug(f"Returning logs request for user {ctx.author}.")
 
         @bot.command()
-        async def debug(ctx, *, text: str):
+        async def debug(ctx, *, text: str = None):
             self.logger.debug(f"Received debug request from user {ctx.author} with text: {text}.")
             response = self.gateway_server.debug(text=text)
             max_len = 2000

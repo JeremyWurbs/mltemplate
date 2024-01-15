@@ -13,7 +13,8 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
 
 from mltemplate import Config as PackageConfig
-from mltemplate.utils import LightningModel, default_logger, experiment_id, ifnone
+from mltemplate.models import LightningModel
+from mltemplate.utils import default_logger, experiment_id, ifnone
 
 torch.set_float32_matmul_precision("medium")
 

@@ -1,4 +1,7 @@
 # Mltemplate
+
+![Discord Demo](./resources/demo.png)
+
 An end-to-end starter template for machine learning projects.
 
 # Installation
@@ -14,9 +17,57 @@ You may use standard python tools (pip) as desired, but it is recommended to use
 $ rye sync
 ```
 
-# Usage
+# Package Structure
 
-![Discord Demo](./resources/demo.png)
+The mltemplate package is an end-to-end machine learning framework for training and deploying models. It is meant for
+to help kickstart new projects, containing all the structural components necessary to train, manage and deploy models. 
+It is expected that you will need to adapt the package to your specific needs, but the provided package structure should 
+be a good starting point. It is modular, so if you don't need a particular component, you can simply delete it.
+
+At a high level, the mltemplate package covers the following components of the ML lifecycle:
+
+- **Training framework**, built on top of PyTorch Lightning, including data, model, and configuration management;
+- **Lifecycle management**, built on top of MLFlow, including experiment tracking, model versioning, and model serving;
+- **Packaging**, including both python (`pip install mltemplate`) and docker (`docker compose up`) functionality; 
+- **Model serving**, built on top of FastAPI, including a REST API for model access through a discord client
+- **Quality of life tools**, including unit tests, automated documentation, and linting.
+
+The Mltemplate package has been tested on Ubuntu 22.04 with Python 3.10.12.
+
+## Package Components
+
+The mltemplate package is organized into the following components:
+
+- **[docs](docs)**. Contains the build files for sphinx documentation. Refer to the [Documentation](#Documentation) 
+    section for more details;
+- **[docker](docker)**. Contains Dockerfiles for building the mltemplate docker image. Refer to the [Docker](./docker) 
+    module for more details;
+- **[mltemplate](mltemplate)**: The main package, containing all the core functionality of the project;
+  - **[mltemplate/backend](mltemplate/backend)**: Contains modules for running each of the discord, gateway and 
+      training servers;;
+  - **[mltemplate/config](mltemplate/config)**: Contains the (hydra) yaml files for model training;
+  - **[mltemplate/core](mltemplate/core)**: Contains core mltemplate packages, including:
+    - **[Config](mltemplate/core/config.py)**. This class provides access to the associated 
+      [config.ini](lunit/core/config.ini) file, used for package-level configurations;
+    - **[MltemplateBase](mltemplate/core/base.py)**. This class serves as a helper base class. It provides unified 
+      logging functionality, among other features.
+  - **[mltemplate/data](mltemplate/data)**. Contains modules for individual `pl.LightningDataModule` datasets;
+  - **[mltemplate/models](mltemplate/models)**. Contains modules for individual `torch.nn.Module` models; also includes 
+      a torch Lightning wrapper class for `torch.nn.Modules`, which can be used to wrap models during training;
+  - **[mltemplate/modules](mltemplate/modules)**: Modules used within the package, including model Registry and GPT 
+      classes;
+  - **[mltemplate/utils](mltemplate/utils)**: Utility functions used throughout the package. Notable utilities include:
+    - **[conversions](mltemplate/utils/conversions.py)**. Provides methods for converting and serializing PIL images, 
+      used to pass images between servers;
+    - **[logging](mltemplate/utils/logging.py)**. Provides a `default_logger` method, may be used to customize the 
+      logger provided by the BaseMltemplate class;
+  - **[mltemplate/scripts](mltemplate/scripts)**: Standalone scripts built on top of the mltemplate package; the project 
+      starts with a training script that demonstrates how to set up a training pipeline to store models to the model 
+      registry;
+- **[tests](tests)**: Contains unit tests for the mltemplate package. Refer to the [Unit Tests](#Unit-Tests) section for 
+    more details;
+
+# Usage
 
 To run the end-to-end demo, refer to the [end-to-end demo](#End-to-End-Demo) section below. It requires a 10-minute 
 discord setup.
@@ -183,7 +234,42 @@ from [GithubActions](https://github.com/JeremyWurbs/mltemplate/actions).
 
 # End-to-End Demo
 
-## Set up your front-end deployment
+The end-to-end demo serves a simple model through a discord bot. It is meant to showcase the full functionality of the
+mltemplate package, and is meant to be a good starting point for your own projects. 
+
+After setting up the backend servers, an end user will be able to 
+do the following through your private discord server:
+
+1. **Train a model**. The user may start a training job, passing in Hydra command line options to configure the training 
+or run multirun sweeps. The training job will be tracked in MLFlow, with logs and metrics available through Tensorboard. 
+The user will be notified when the training job completes, with all resulting models stored in the model registry.
+2. **Deploy a model**. The user may deploy a model from the model registry, which will be served through the gateway
+server on subsequent requests.
+3. **Run inference**. The user may run the deployed model, passing an image through the discord bot to be classified.
+
+The following helper commands are also exposed through the demo:
+
+1. **Registry summary**. The user may request a summary of the model registry, including all models and their associated
+metrics.
+2. **Server logs**. The user may request the server logs, which are kept by each backend server separately. In practice 
+these logs would likely be used through an administrator or developer account.
+
+Finally, the demo is set up to also make use of GPT, if an OpenAI API key is provided. In this case, the following 
+additional commands are available:
+
+1. **Chat**. The user may chat with GPT, which will be used as a general chat agent.
+2. **Debug**. The user may request GPT to help debug any problem with the model or servers. In this case the server logs 
+are automatically passed to GPT, which will provide debug advice on any errors to the user.
+
+## Application Structure
+
+![Package Structure](./resources/package_structure.png)
+
+The overall structure of the demo is shown above. To run the demo, you will need to run set up a Discord bot/server for 
+the frontend, and then run the backend servers to run your application pipeline. The instructions below detail each 
+step.
+
+### Set up your front-end deployment
 
 The end-to-end demo uses Discord as the front-end deployment environment, as it is generally very easy to set up a 
 new discord server and associated bot for deployment. Indeed, many companies have used Discord as a deployment 
@@ -200,7 +286,7 @@ the `Bot` tab. Click on `Reset Token` and then copy/paste the new token to your 
 
 Congrats! Your application now has a front-end deployment environment!
 
-## (Optional) Set up GPT
+### (Optional) Set up GPT
 
 While not absolutely necessary, the demo is set up to incorporate GPT for end-client ease-of-use. By default, it will 
 be used as a general chat agent for anyone DMing the bot, and can be prompted more directly by setting its system 
@@ -211,9 +297,7 @@ If you have not, sign up and log into the [OpenAI Developer Platform](https://pl
 your [API keys](https://platform.openai.com/api-keys). Create a new key and copy/paste it into your 
 [config.ini](mltemplate/core/config.ini) file under API_KEYS/OPENAI.
 
-## Start the backend servers
-
-![Discord Architecture](./resources/mltemplate_architecture.png)
+### Start the backend servers
 
 The demo includes a relatively sophisticated end-to-end deployment architecture. While it has many components, they are 
 all modular and meant to be able to put on separate machines, as appropriate, to scale to an actual production 
@@ -314,7 +398,7 @@ tensorboard --logdir ${HOME}/mltemlpate/tensorboard
 
 ![Tensorboard Example](./resources/tensorboard_sample.png)
 
-### Advanced Deployment
+#### Advanced Deployment
 
 For a more streamlined deployment, follow the instructions in the [docker readme](docker/README.md), in which case you 
 may configure the deployment through a single [Docker Compose](docker/docker-compose.yml) file. Then all the backend 
@@ -326,6 +410,77 @@ docker compose up
 
 ## Demo Showcase
 
-Once the backend servers are up and running, you may showcase your demo application through your discord server. 
+Once the backend servers are up and running, you may showcase your demo application through your discord server. You may 
+run the following commands in any channel the bot has access to, or DM the bot directly. If DMing the bot directly, all 
+non-command messages will equate to running the `>chat` command.
 
-![Discord Demo](./resources/demo.png)
+The demo comes with the following commands out-of-the-box.
+
+### List Commands
+
+![List Commands](./resources/demo_list_commands.png)
+
+### Train a model
+
+![Train Model](./resources/demo_train.png)
+
+Examples:
+
+```commandline
+>train
+>train --config-name train.yaml --model=cnn --dataset=mnist
+>train --config-name train.yaml --model=cnn --dataset=mnist --trainer.max_epochs=2,5,10,15,20 --multirun
+```
+
+Any given arguments are directly passed and parsed by Hydra. In particular, note that if you run a parameter sweep (by 
+providing multiple values for a given parameter), you must also pass the `--multirun` flag. Training will run in the 
+background on the training server, and models stored in the model registry. You will be notified when the training job 
+completes.
+
+### Deploy a model
+
+![Deploy Model](./resources/demo_deploy.png)
+
+### Run inference
+
+![Inference](./resources/demo_inference.png)
+
+There are two commands for running inference:
+
+```commandline 
+>classify_id TEST_ID_INTEGER
+>classify_image [UPLOAD IMAGE]
+```
+
+In the first case, you may specify an integer ID from the test dataset, which will be loaded and classified by the 
+model. In the second case, you may upload an image (drag and drop into your discord message); example MNIST images may 
+be found in the [tests/resources](tests/resources) directory.
+
+### Registry Summary
+
+![Registry Summary](./resources/demo_registry_summary.png)
+
+You may use this command at any time to get a summary of the model registry, including all models and their associated
+metrics.
+
+### Server Logs
+
+![Server Logs](./resources/demo_server_logs.png)
+
+You may use this command at any time to get the server logs, which are kept by each backend server separately. 
+
+### Chat
+
+![Chat](./resources/demo_chat.png)
+
+You may use this command at any time to chat with GPT, which will be used as a general chat agent. This command is 
+implied if you DM the bot with a general message.
+
+### Debug
+
+![Debug](./resources/demo_debug.png)
+
+You may use this command at any time to request GPT to help debug any problem with the model or servers. In this case
+the server logs are automatically passed to GPT, which will provide debug advice on any errors to the user. The debug 
+command may be run alone, or the user may optionally pass a message to GPT to help it understand the context of the
+debug request.
