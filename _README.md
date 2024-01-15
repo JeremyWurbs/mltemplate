@@ -307,11 +307,12 @@ registry;
 2. **Training Server** (Optional). The training server is used to train models and store them in the registry; it is 
 only needed if you wish to train models from discord (i.e. use the `>train` command in discord). It is not needed to 
 train models locally.
+3. **Deployment Server**. The deployment server is used to serve models from the registry.
 3. **Discord Client**. The discord client receives requests from the discord channel and forwards them to the backend 
 to be processed;
 4. **Gateway Server**. The gateway server is used to serve models from the registry. It accepts any user requests not 
 processed by the discord client (i.e. all requests relating to model inference/training and the model registry). 
-Under the hood it communicates with the MLFlow and Training servers, as appropriate;
+Under the hood it communicates with the MLFlow, Training and Deployment servers, as appropriate;
 5. **Tensorboard** (Optional). Tensorboard is used to monitor training progress. It is not accessible from the discord 
 client, but can be accessed directly through a local browser. It is only needed if you wish to monitor training 
 progress.
@@ -375,7 +376,19 @@ Or, with Rye:
 rye run training_server
 ```
 
-4. Start the Discord client:
+4. Start the Deployment server:
+
+```commandline
+python -m gunicorn -w 1 -b localhost:8083 -k uvicorn.workers.UvicornWorker "mltemplate.backend.deployment.deployment_server:app()"
+```
+
+Or, with Rye:
+
+```commandline
+rye run deployment_server
+```
+
+5. Start the Discord client:
 
 ```commandline
 python mltemplate/backend/discord/discord_client.py
