@@ -39,6 +39,10 @@ The Mltemplate package has been tested on Ubuntu 22.04 with Python 3.10.12.
 
 The mltemplate package is organized into the following components:
 
+<details>
+
+<summary><b>Components</b></summary>
+
 - **[docs](docs)**. Contains the build files for Sphinx documentation. Refer to the [Documentation](#Documentation) 
     section for more details;
 - **[docker](docker)**. Contains Dockerfiles for building the mltemplate Docker image. Refer to the [Docker](./docker) 
@@ -67,6 +71,8 @@ The mltemplate package is organized into the following components:
       registry;
 - **[tests](tests)**: Contains unit tests for the mltemplate package. Refer to the [Unit Tests](#Unit-Tests) section for 
     more details;
+
+</details>
 
 # Package Management
 
