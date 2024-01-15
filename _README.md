@@ -85,6 +85,8 @@ $ rye run lint
 
 <details>
 
+<summary>Output</summary>
+
 ```text 
 pylint mltemplate/
 
@@ -120,6 +122,10 @@ To run unit tests with [pytest](https://docs.pytest.org/en/):
 $ rye run test
 ```
 
+<details>
+
+<summary>Output</summary>
+
 ```text 
 ============================= test session starts ==============================
 platform linux -- Python 3.11.6, pytest-7.4.4, pluggy-1.3.0
@@ -144,9 +150,9 @@ TOTAL                                               1134    854    25%
 =========================== short test summary info ============================
 SKIPPED [1] tests/mltemplate/core/test_registry.py:12: No runs found in MLflow.
 ======================== 12 passed, 1 skipped in 7.31s =========================
-
-
 ```
+
+</details>
 
 ## Auto-formatting
 
@@ -155,6 +161,10 @@ To auto-format your code with [isort](https://pycqa.github.io/isort/) and [black
 ```commandline
 $ rye run format 
 ```
+
+<details>
+
+<summary>Output</summary>
 
 ```text
 isort -l 120 mltemplate/
@@ -169,6 +179,8 @@ black -l 120 tests/
 All done! ✨ 🍰 ✨
 14 files left unchanged.
 ```
+
+</details>
 
 ## Building the Docs
 
@@ -198,11 +210,21 @@ rye run graph-dependencies
 
 Which should generate two files in the root directory: 
 
-*packages.png*:
+<details>
+
+<summary><b>packages.png</b></summary>
+
 ![Packages](resources/packages.png)
 
-and *classes.png*:
+</details>
+
+<details>
+
+<summary><b>classes.png</b></summary>
+
 ![Classes](resources/classes.png)
+
+</details>
 
 You may use these graphs to help get a quick overview of the project, delete superfluous code and avoid circular 
 dependencies.
