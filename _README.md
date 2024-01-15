@@ -79,15 +79,13 @@ you can use through `rye run <command>`.
 To lint your code with [pylint](https://www.pylint.org/), [isort](https://pycqa.github.io/isort/) and 
 [black](https://github.com/psf/black):
 
+```commandline
+$ rye run lint
+```
+
 <details>
 
-<summary>
-<b>$ rye run lint</b>
-</summary>
-
 ```text 
-$ rye run lint
-
 pylint mltemplate/
 
 ------------------------------------
