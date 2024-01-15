@@ -472,13 +472,13 @@ python mltemplate/backend/discord/discord_client.py
 tensorboard --logdir ${HOME}/mltemlpate/tensorboard
 ```
 
-    <details>
-    
-    <summary>Image</summary>
-    
-    ![Tensorboard Example](./resources/tensorboard.png)
-    
-    </details>
+<details><blockquote>
+
+<summary>Image</summary></blockquote>
+
+![Tensorboard Example](./resources/tensorboard.png)
+
+</details>
 
 #### Advanced Deployment
 
