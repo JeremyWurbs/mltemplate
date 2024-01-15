@@ -364,7 +364,8 @@ Notes:
   - The default configs assume that output data (MLFlow registry, hydra training runs, tensorboard logs, standard 
 debug logs, etc.) will be stored in `${HOME}/mltemplate` and, for unit tests, that the project has been installed in 
 `${HOME}/projects/mltemplate`. If you wish to change these locations, you will need to update the same 
-[config.ini](mltemplate/core/config.ini) file accordingly. 
+[config.ini](mltemplate/core/config.ini) file accordingly. To create the default directories automatically, you may run 
+`rye run create_project_directories`, which will create all directories according to your config.ini file.
   - The number of workers on the training server (`-w 4`) determines how many simultaneous training runs may be done. 
 If you set the number too high you may run out of memory. In practice, you will likely want to run the training server 
 in a completely separate environment, and configure each training job to get a separate GPU. 
