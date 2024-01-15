@@ -6,7 +6,6 @@ import os
 from typing import Dict, List, Optional
 
 import mlflow
-import numpy as np
 from fastapi import FastAPI, HTTPException
 from pytorch_lightning import LightningDataModule
 
@@ -26,7 +25,7 @@ from mltemplate.backend.training import TrainingServer
 from mltemplate.data import MNIST
 from mltemplate.modules import GPT, Registry
 from mltemplate.types import Message
-from mltemplate.utils import ascii_to_pil, default_logger, ifnone, pil_to_ascii, pil_to_ndarray, tensor_to_pil
+from mltemplate.utils import ascii_to_pil, default_logger, ifnone, pil_to_ascii
 
 
 class GatewayServer(MltemplateBase):
