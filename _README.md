@@ -498,13 +498,25 @@ non-command messages will equate to running the `>chat` command.
 
 The demo comes with the following commands out-of-the-box.
 
-### List Commands
+### >list_commands
+
+<details>
+
+<summary>Example</summary>
 
 ![List Commands](./resources/demo_list_commands.png)
 
-### Train a model
+</details>
+
+### >train
+
+<details>
+
+<summary>Example</summary>
 
 ![Train Model](./resources/demo_train.png)
+
+</details>
 
 Examples:
 
@@ -519,9 +531,15 @@ Any given arguments are directly passed to and parsed by Hydra. In particular, n
 background on the training server, and store the trained models in the model registry when complete. You will be 
 notified when the training job completes.
 
-### Deploy a model
+### >load_model (deploy model)
+
+<details>
+
+<summary>Example</summary>
 
 ![Deploy Model](./resources/demo_load_model.png)
+
+</details>
 
 When deploying a model, pass in the model name and version number. For example, 
 
@@ -529,9 +547,15 @@ When deploying a model, pass in the model name and version number. For example,
 >load_model ModelName 1
 ```
 
-### Run inference
+### >classify_id / >classify_image (run inference)
+
+<details>
+
+<summary>Example</summary>
 
 ![Inference](./resources/demo_classify.png)
+
+</details>
 
 There are two commands for running inference:
 
@@ -544,29 +568,53 @@ In the first case, you may specify an integer ID from the test dataset, which wi
 model. In the second case, you may upload an image (drag and drop the image file into your Discord message); example 
 MNIST images may be found in the [tests/resources](tests/resources) directory.
 
-### Registry Summary
+### >registry_summary
+
+<details>
+
+<summary>Example</summary>
 
 ![Registry Summary](./resources/demo_registry_summary.png)
+
+</details>
 
 You may use the `>registry_summary` command at any time to get a summary of the model registry, including all models and 
 their associated metrics.
 
-### Server Logs
+### >logs
+
+<details>
+
+<summary>Example</summary>
 
 ![Server Logs](./resources/demo_logs.png)
 
+</details>
+
 You may use the `>logs` command at any time to get the server logs. 
 
-### Chat
+### >chat
+
+<details>
+
+<summary>Example</summary>
 
 ![Chat](./resources/demo_chat.png)
+
+</details>
 
 You may use the `>chat` command at any time to converse freely with GPT. This command is implied if you DM the bot with 
 a general message.
 
-### Debug
+### >debug
+
+<details>
+
+<summary>Example</summary>
 
 ![Debug](./resources/demo_debug.png)
+
+</details>
 
 You may use the `debug` command at any time to request GPT to help debug any problem with the model or servers. The 
 server logs are automatically passed to GPT. The debug command itself may be run alone, or the user may optionally pass 
