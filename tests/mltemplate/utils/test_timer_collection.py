@@ -12,7 +12,8 @@ def test_timer_collection():
 
     # Test that a timer can be started
     timer_collection.start("Timer 1")
-    assert timer_collection.duration("Timer 1") > 0
+    time.sleep(0.1)
+    assert timer_collection.duration("Timer 1") > 0.0
 
     # Test that a timer can be stopped
     time.sleep(0.1)
