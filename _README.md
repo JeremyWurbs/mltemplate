@@ -379,14 +379,18 @@ PYTHONPATH=${HOME}/projects/mltemplate [... continue command]
 1. Start the MLFlow Tracking and Registry server:
 
 ```commandline
+rye run mlflow_server
+```
+
+<details>
+
+<summary>Without Rye</summary>
+
+```commandline
 mlflow server --backend-store-uri ${HOME}/mltemplate/mlflow --port 8080
 ```
 
-Or, with Rye:
-
-```commandline
-rye run mlflow_server
-```
+</details>
 
 Once the MLFlow server is up and running, you may get local access by opening a browser to its address:
 
@@ -394,51 +398,67 @@ Once the MLFlow server is up and running, you may get local access by opening a 
 
 2. Start the Gateway server:
 
-```commandline
-python -m gunicorn -w 1 -b localhost:8081 -k uvicorn.workers.UvicornWorker "mltemplate.backend.gateway.gateway_server:app()"
-```
-
-Or, with Rye:
-
 ```commandline 
 rye run gateway_server
 ```
 
-3. Start the Training server:
+<details>
+
+<summary>Without Rye</summary>
 
 ```commandline
-python -m gunicorn -w 4 -b localhost:8082 -k uvicorn.workers.UvicornWorker "mltemplate.backend.training.training_server:app()"
+python -m gunicorn -w 1 -b localhost:8081 -k uvicorn.workers.UvicornWorker "mltemplate.backend.gateway.gateway_server:app()"
 ```
 
-Or, with Rye:
+</details>
+
+3. Start the Training server:
 
 ```commandline 
 rye run training_server
 ```
 
-4. Start the Deployment server:
+<details>
+
+<summary>Without Rye</summary>
 
 ```commandline
-python -m gunicorn -w 1 -b localhost:8083 -k uvicorn.workers.UvicornWorker "mltemplate.backend.deployment.deployment_server:app()"
+python -m gunicorn -w 4 -b localhost:8082 -k uvicorn.workers.UvicornWorker "mltemplate.backend.training.training_server:app()"
 ```
 
-Or, with Rye:
+</details>
+
+4. Start the Deployment server:
 
 ```commandline
 rye run deployment_server
 ```
 
+<details>
+
+<summary>Without Rye</summary>
+
+```commandline
+python -m gunicorn -w 1 -b localhost:8083 -k uvicorn.workers.UvicornWorker "mltemplate.backend.deployment.deployment_server:app()"
+```
+
+</details>
+
 5. Start the Discord client:
+
+```commandline
+rye run discord_client
+```
+
+<details>
+
+<summary>Without Rye</summary>
 
 ```commandline
 python mltemplate/backend/discord/discord_client.py
 ```
 
-Or, with Rye:
-
-```commandline
-rye run discord_client
-```
+</details>
 
 5. (Optional) Start Tensorboard:
 
