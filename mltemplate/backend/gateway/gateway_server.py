@@ -187,6 +187,7 @@ class GatewayServer(MltemplateBase):
 
             discord_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "discord_logs.txt")
             gateway_server_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "gateway_server_logs.txt")
+            deployment_server_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "deployment_server_logs.txt")
             training_server_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "training_server_logs.txt")
             training_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "train_logs.txt")
 
@@ -195,6 +196,8 @@ class GatewayServer(MltemplateBase):
                 log_files.append(discord_logfile)
             if os.path.exists(gateway_server_logfile):
                 log_files.append(gateway_server_logfile)
+            if os.path.exists(deployment_server_logfile):
+                log_files.append(deployment_server_logfile)
             if os.path.exists(training_server_logfile):
                 log_files.append(training_server_logfile)
             if os.path.exists(training_logfile):

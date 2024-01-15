@@ -168,7 +168,6 @@ class DiscordClient(MltemplateBase):
             message += " ".join([f"\n\t`>{command}`" for command in self.supported_commands])
             message += "\n\nI also know the following GPT commands, which can be used by enabling GPT:\n"
             message += " ".join([f"\n\t`>{command}`" for command in self.gpt_commands])
-            message += "\n\nYou may DM me for further help in using my commands."
             self.logger.debug(f"Returning list_commands request for user {ctx.author}:\n{message}")
             await ctx.send(message)
 
@@ -330,6 +329,13 @@ class DiscordClient(MltemplateBase):
                 )
             except Exception as err:
                 self.logger.exception(f"Error raised in sending training server logs:\n{err}")
+                raise err
+            try:
+                await ctx.send(
+                    file=discord.File(os.path.join(Config()["DIR_PATHS"]["LOGS"], "deployment_server_logs.txt"))
+                )
+            except Exception as err:
+                self.logger.exception(f"Error raised in sending deployment server logs:\n{err}")
                 raise err
             try:
                 await ctx.send(file=discord.File(os.path.join(Config()["DIR_PATHS"]["LOGS"], "train_logs.txt")))
