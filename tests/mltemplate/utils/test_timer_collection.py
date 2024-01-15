@@ -28,8 +28,8 @@ def test_timer_collection():
     time.sleep(0.1)
     assert timer_collection.duration("Timer 1") > 0.1
     timer_collection.stop("Timer 1")
-    time.sleep(1.)
-    assert timer_collection.duration("Timer 1") < 1.
+    time.sleep(1.0)
+    assert timer_collection.duration("Timer 1") < 1.0
     timer_collection.start("Timer 1")
     time.sleep(0.1)
     timer_collection.stop("Timer 1")
@@ -42,10 +42,10 @@ def test_timer_collection():
     timer_collection.start("Timer 2")
     time.sleep(0.1)
     timer_collection.stop("Timer 1")
-    time.sleep(1.)
+    time.sleep(1.0)
     timer_collection.stop("Timer 2")
     assert timer_collection.duration("Timer 1") > 0.1
-    assert timer_collection.duration("Timer 1") < 1.
+    assert timer_collection.duration("Timer 1") < 1.0
     assert timer_collection.duration("Timer 2") > 1.1
 
     # Test that the timer collection can be converted to a string

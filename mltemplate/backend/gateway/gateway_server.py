@@ -150,7 +150,7 @@ class GatewayServer(MltemplateBase):
             )
             response["image"] = pil_to_ascii(response["image"])
             print(response)
-            print(f'type: {type(response)}')
+            print(f"type: {type(response)}")
             self.logger.debug(f"Returning classify_by_id request with data: {response}.")
             return response
 

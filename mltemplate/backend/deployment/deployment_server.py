@@ -12,11 +12,7 @@ from pytorch_lightning import LightningDataModule
 
 from mltemplate import MltemplateBase
 from mltemplate.backend.deployment.connection_client import ConnectionClient as DeploymentConnection
-from mltemplate.backend.deployment.types import (
-    ClassifyIDInput,
-    ClassifyImageInput,
-    LoadModelInput,
-)
+from mltemplate.backend.deployment.types import ClassifyIDInput, ClassifyImageInput, LoadModelInput
 from mltemplate.data import MNIST
 from mltemplate.modules import Registry
 from mltemplate.utils import ascii_to_pil, default_logger, pil_to_ascii, pil_to_ndarray, tensor_to_pil
