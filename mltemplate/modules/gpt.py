@@ -1,13 +1,13 @@
 """OpenAI GPT module."""
-import openai.types.beta.threads.message_content_image_file
 from typing import Dict, List, Optional, Tuple, Union
 
+import openai.types.beta.threads.message_content_image_file
 from openai import OpenAI
 from openai.types import FileDeleted
 
 from mltemplate import MltemplateBase
 from mltemplate.types import Message
-from mltemplate.utils import ifnone, bytes_to_pil
+from mltemplate.utils import bytes_to_pil, ifnone
 
 
 class GPT(MltemplateBase):
@@ -29,10 +29,11 @@ class GPT(MltemplateBase):
         result = gpt.message('Use the method you just wrote to compute the GCD of 508012190 and 35967750000.')  # 36890
 
     """
-    name = 'GPT'
-    default_instructions = 'You are a helpful personal assistant. Answer user questions. Write code as necessary.'
+
+    name = "GPT"
+    default_instructions = "You are a helpful personal assistant. Answer user questions. Write code as necessary."
     default_tools = [{"type": "code_interpreter"}, {"type": "retrieval"}]
-    default_model = 'gpt-4-1106-preview'
+    default_model = "gpt-4-1106-preview"
 
     def __init__(
         self,
@@ -41,12 +42,12 @@ class GPT(MltemplateBase):
         tools: Optional[List[Dict[str, str]]] = None,
         model: Optional[str] = None,
         filenames: Optional[Union[str, List[str]]] = None,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
         if isinstance(filenames, str):
             filenames = [filenames]
-        self.client = OpenAI(api_key=self.config['API_KEYS']['OPENAI'])
+        self.client = OpenAI(api_key=self.config["API_KEYS"]["OPENAI"])
 
         self._assistant_name = ifnone(name, default=self.name)
         self.instructions = ifnone(instructions, default=self.default_instructions)
@@ -60,32 +61,33 @@ class GPT(MltemplateBase):
         self.files: Dict[str, str] = {}  # maps filenames to file IDs
         self.reset_chat()
 
-        self.logger.info(f'Created GPT object {id(self)}')
+        self.logger.info(f"Created GPT object {id(self)}")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         deleted_status = {}
-        for filename in self.files.keys():
+        for filename in self.files:
             deleted, status = self.delete_file(filename)
             deleted_status[filename] = {}
-            deleted_status[filename]['deleted'] = deleted
-            deleted_status[filename]['status'] = status
-        self.logger.debug(f'GPT object {id(self)} __exit__()')
-        self.logger.debug(f'deleted_status: {deleted_status}')
+            deleted_status[filename]["deleted"] = deleted
+            deleted_status[filename]["status"] = status
+        self.logger.debug(f"GPT object {id(self)} __exit__()")
+        self.logger.debug(f"deleted_status: {deleted_status}")
 
-        deleted = [deleted_status[filename]['deleted'] for filename in self.files.keys()]
+        deleted = [deleted_status[filename]["deleted"] for filename in self.files]
         if not all(deleted):
             raise RuntimeError(
-                f'Unable to delete the following files: '
-                f'''{[deleted_status[filename]['status'] for filename in self.files.keys() 
-                    if not deleted_status[filename]['deleted']]}''')
-        self.logger.debug(f'deleted: {deleted}')
+                f"Unable to delete the following files: "
+                f"""{[deleted_status[filename]['status'] for filename in self.files 
+                    if not deleted_status[filename]['deleted']]}"""
+            )
+        self.logger.debug(f"deleted: {deleted}")
         return True
 
     def reset_chat(self):
         """Reset the chat to its starting state."""
         if self.filenames is not None:
             for filename in self.filenames:
-                if filename not in self.files.keys():
+                if filename not in self.files:
                     file = self.upload_file(filename)
                     self.files[filename] = file.id
             self.assistant = self.client.beta.assistants.create(
@@ -93,47 +95,35 @@ class GPT(MltemplateBase):
                 instructions=self.instructions,
                 tools=self.tools,
                 model=self.model,
-                file_ids=list(self.files.values()))
+                file_ids=list(self.files.values()),
+            )
         else:
             self.assistant = self.client.beta.assistants.create(
-                name=self._assistant_name,
-                instructions=self.instructions,
-                tools=self.tools,
-                model=self.model)
+                name=self._assistant_name, instructions=self.instructions, tools=self.tools, model=self.model
+            )
         self.thread = self.client.beta.threads.create()
         self._history = []
 
     def add_message(self, text: str):
         """Add a message to the chat history without sending it for a response."""
-        self.client.beta.threads.messages.create(
-            thread_id=self.thread.id,
-            role='user',
-            content=text
-        )
+        self.client.beta.threads.messages.create(thread_id=self.thread.id, role="user", content=text)
 
     def message(self, text: str, instructions: Optional[str] = None) -> Message:
         """Send a message to the agent and get a response."""
         self.add_message(text)
 
         run = self.client.beta.threads.runs.create(
-            thread_id=self.thread.id,
-            assistant_id=self.assistant.id,
-            instructions=instructions
+            thread_id=self.thread.id, assistant_id=self.assistant.id, instructions=instructions
         )
-        while run.status not in ['completed', 'failed', 'expired', 'cancelled']:
-            if run.status == 'requires_action':
+        while run.status not in ["completed", "failed", "expired", "cancelled"]:
+            if run.status == "requires_action":
                 # TODO
                 raise NotImplementedError
-            run = self.client.beta.threads.runs.retrieve(
-                thread_id=self.thread.id,
-                run_id=run.id
-            )
-        if run.status != 'completed':
-            raise RuntimeError(f'Message failed with status: {run.status}')
+            run = self.client.beta.threads.runs.retrieve(thread_id=self.thread.id, run_id=run.id)
+        if run.status != "completed":
+            raise RuntimeError(f"Message failed with status: {run.status}")
 
-        messages = self.client.beta.threads.messages.list(
-            thread_id=self.thread.id
-        )
+        messages = self.client.beta.threads.messages.list(thread_id=self.thread.id)
 
         conversation = []
         for message in messages:
@@ -144,18 +134,16 @@ class GPT(MltemplateBase):
         return conversation[-1]
 
     def handle_requires_action(self, run):
-        print(f'run: {run}')
-        self.logger.exception('NotImplementedError')
+        print(f"run: {run}")
+        self.logger.exception("NotImplementedError")
         raise NotImplementedError  # TODO
 
     def parse_message(self, message_id) -> Message:
         # Retrieve the message object
-        message = self.client.beta.threads.messages.retrieve(
-            thread_id=self.thread.id,
-            message_id=message_id)
+        message = self.client.beta.threads.messages.retrieve(thread_id=self.thread.id, message_id=message_id)
 
         # Extract the message content
-        message_response = Message(sender=message.role, text='')
+        message_response = Message(sender=message.role, text="")
         for response in message.content:
             if isinstance(response, openai.types.beta.threads.message_content_image_file.MessageContentImageFile):
                 image_bytes = self.client.files.content(response.image_file.file_id).read()
@@ -165,15 +153,15 @@ class GPT(MltemplateBase):
                 text = response.text
                 annotations = []
                 for index, annotation in enumerate(text.annotations):
-                    if file_citation := getattr(annotation, 'file_citation', None):
-                        text.value = text.value.replace(annotation.text, f' [{index}]')
+                    if file_citation := getattr(annotation, "file_citation", None):
+                        text.value = text.value.replace(annotation.text, f" [{index}]")
                         cited_file = self.client.files.retrieve(file_citation.file_id)
-                        annotations.append(f'[{index}] {file_citation.quote} from {cited_file.filename}')
-                    elif file_path := getattr(annotation, 'file_path', None):
+                        annotations.append(f"[{index}] {file_citation.quote} from {cited_file.filename}")
+                    elif file_path := getattr(annotation, "file_path", None):
                         cited_file = self.client.files.retrieve(file_path.file_id)
                         image_bytes = self.client.files.content(file_path.file_id).read()
                         message_response.images.append(bytes_to_pil(image_bytes))
-                        annotations.append(f'[{index}] image {cited_file.filename}')
+                        annotations.append(f"[{index}] image {cited_file.filename}")
                 message_response.text += text.value
         return message_response
 
@@ -183,18 +171,14 @@ class GPT(MltemplateBase):
     def upload_file(self, filename: str):
         # Upload a file with an "assistants" purpose
         file = self.client.files.create(
-            file=open(filename, 'rb'),
-            purpose='assistants'
+            file=open(filename, "rb"), purpose="assistants"  # pylint: disable=consider-using-with
         )
         return file
 
     def delete_file(self, filename: str) -> Tuple[bool, Optional[FileDeleted]]:
-        if filename in self.files.keys():
+        if filename in self.files:
             try:  # Delete the reference from the assistant to the pdf file
-                self.client.beta.assistants.files.delete(
-                    assistant_id=self.assistant.id,
-                    file_id=self.files[filename]
-                )
+                self.client.beta.assistants.files.delete(assistant_id=self.assistant.id, file_id=self.files[filename])
             finally:  # Regardless, actually delete the file
                 file_deletion_status = self.client.files.delete(file_id=self.files[filename])
             return file_deletion_status.deleted, file_deletion_status
@@ -205,7 +189,7 @@ class GPT(MltemplateBase):
         return self.message(text, **kwargs)
 
     def __str__(self):
-        conv_str = ''
+        conv_str = ""
         for message in self._history:
             conv_str += f'{message["role"]}: {message["content"]}\n\n'
         return conv_str

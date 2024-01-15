@@ -11,6 +11,7 @@ from fastapi import FastAPI, HTTPException
 from pytorch_lightning import LightningDataModule
 
 from mltemplate import MltemplateBase
+from mltemplate.backend.gateway.connection_client import ConnectionClient as GatewayConnection
 from mltemplate.backend.gateway.types import (
     BestModelForExperimentInput,
     ChatInput,
@@ -20,7 +21,6 @@ from mltemplate.backend.gateway.types import (
     LoadModelInput,
     TrainInput,
 )
-from mltemplate.backend.gateway.connection_client import ConnectionClient as GatewayConnection
 from mltemplate.backend.training import TrainingServer
 from mltemplate.data import MNIST
 from mltemplate.modules import GPT, Registry
@@ -55,12 +55,7 @@ class GatewayServer(MltemplateBase):
         self.registry = Registry(tracking_server_uri=tracking_server_uri)
         self.training_server = TrainingServer.connection(self.config["HOSTS"]["TRAINING_SERVER"])
 
-        self.commands: List[str] = [
-            "commands",
-            "models",
-            "load-model",
-            "classify-by-id"
-        ]
+        self.commands: List[str] = ["commands", "models", "load-model", "classify-by-id"]
         self.gpt = None
         if "XXXXXXXXXX" not in self.config["API_KEYS"]["OPENAI"]:
             self.gpt = GPT()
@@ -124,11 +119,11 @@ class GatewayServer(MltemplateBase):
             self.logger.debug(f"Returning experiments request with data: {experiment_list}.")
             return experiment_list
 
-        @app_.post('/best-model-for-experiment')
+        @app_.post("/best-model-for-experiment")
         def best_model_for_experiment(payload: BestModelForExperimentInput):
-            self.logger.debug(f'Received best_model_for_experiment request with payload: {payload}.')
+            self.logger.debug(f"Received best_model_for_experiment request with payload: {payload}.")
             model = self.registry.best_model_for_experiment_name(payload.experiment_name)
-            self.logger.debug(f'Returning best_model_for_experiment request with data: {model}.')
+            self.logger.debug(f"Returning best_model_for_experiment request with data: {model}.")
             return model
 
         @app_.post("/load-model")
@@ -218,7 +213,7 @@ class GatewayServer(MltemplateBase):
             discord_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "discord_logs.txt")
             gateway_server_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "gateway_server_logs.txt")
             training_server_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "training_server_logs.txt")
-            training_logfile =  os.path.join(self.config["DIR_PATHS"]["LOGS"], "train_logs.txt")
+            training_logfile = os.path.join(self.config["DIR_PATHS"]["LOGS"], "train_logs.txt")
 
             log_files = []
             if os.path.exists(discord_logfile):
@@ -230,11 +225,12 @@ class GatewayServer(MltemplateBase):
             if os.path.exists(training_logfile):
                 log_files.append(training_logfile)
 
-            instructions = \
-                ("You are a professional python developer. You're job is to help debug the application servers for the "
-                 f"mltemplate project. You will talk with the mltemplate application developers and answer their "
-                 f"questions. You have access to the following log files: {log_files}.\n\n"
-                 f"Use the provided log files to provide useful debugging information to developer queries.")
+            instructions = (
+                "You are a professional python developer. You're job is to help debug the application servers for the "
+                f"mltemplate project. You will talk with the mltemplate application developers and answer their "
+                f"questions. You have access to the following log files: {log_files}.\n\n"
+                f"Use the provided log files to provide useful debugging information to developer queries."
+            )
             try:
                 with GPT(filenames=log_files, instructions=instructions) as gpt:
                     text = ifnone(payload.text, default="Please help me debug the most recent command I ran.")

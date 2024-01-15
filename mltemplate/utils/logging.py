@@ -34,7 +34,7 @@ def default_logger(
         fmt = file_formatter if file_formatter is not None else default_formatter()
         if file_name is None:
             raise ValueError("file_name must be specified if file_level is not None.")
-        #file_name = file_name if file_name is not None else os.path.join(Config()["DIR_PATHS"]["LOGS"], "logs.txt")
+        # file_name = file_name if file_name is not None else os.path.join(Config()["DIR_PATHS"]["LOGS"], "logs.txt")
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
         file_handler = RotatingFileHandler(file_name, mode=file_mode)
         file_handler.setLevel(file_level)

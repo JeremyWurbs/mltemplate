@@ -43,7 +43,8 @@ class ConnectionClient:
 
     def best_model_for_experiment(self, experiment_name: str):
         response = requests.request(
-            'POST', self.host + 'best-model-for-experiment', json={'experiment_name': experiment_name}, timeout=60)
+            "POST", self.host + "best-model-for-experiment", json={"experiment_name": experiment_name}, timeout=60
+        )
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)
         return json.loads(response.content)
@@ -116,9 +117,7 @@ class ConnectionClient:
         return json.loads(response.content)
 
     def debug(self, text: Optional[str] = None):
-        response = requests.request(
-            "POST", self.host + "debug", json={"text": text}, timeout=60
-        )
+        response = requests.request("POST", self.host + "debug", json={"text": text}, timeout=60)
         if response.status_code != 200:
             raise HTTPException(response.status_code, response.content)
         data = json.loads(response.content)

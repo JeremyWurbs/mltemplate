@@ -67,10 +67,7 @@ class DiscordClient(MltemplateBase):
             "classify_image",
             "logs",
         ]
-        self.gpt_commands = [
-            "chat",
-            "debug"
-        ]
+        self.gpt_commands = ["chat", "debug"]
 
     def discord_bot(self):
         bot = commands.Bot(description=self.description, command_prefix=self.command_prefixes, intents=self.intents)
