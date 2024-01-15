@@ -97,6 +97,13 @@ format = {chain = [
 test = {chain = ["echo:test", "test:pytest"]}
 "echo:test" = "echo 'pytest -rs --cov=mltemplate --maxfail=1 --cov-report term-missing -W ignore::DeprecationWarning tests/'"
 "test:pytest" = "pytest -rs --cov=mltemplate --maxfail=1 --cov-report term-missing -W ignore::DeprecationWarning tests/"
+docs = {chain = ["echo:compile-docs", "docs:compile-docs", "echo:build-html-docs", "docs:build-html-docs", "echo:build-pdf-docs", "docs:build-pdf-docs"]}
+"echo:compile-docs" = "echo 'sphinx-apidoc --force -o docs mltemplate/'"
+"docs:compile-docs" = "sphinx-apidoc --force -o docs mltemplate/"
+"echo:build-html-docs" = "echo 'make -C docs/ clean html'"
+"docs:build-html-docs" = "make -C docs/ clean html"
+"echo:build-pdf-docs" = "echo 'make -C docs/ simplepdf'"
+"docs:build-pdf-docs" = "make -C docs/ simplepdf"
 graph-dependencies = {chain = ["echo:dependency-graph", "dependency-graph:mltemplate"]}
 "echo:dependency-graph" = "echo 'pyreverse -o png --colorized --max-color-depth 3 --no-standalone mltemplate'"
 "dependency-graph:mltemplate" = "pyreverse -o png --colorized --max-color-depth 3 --no-standalone mltemplate"
