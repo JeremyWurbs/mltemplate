@@ -431,8 +431,8 @@ Examples:
 
 Any given arguments are directly passed to and parsed by Hydra. In particular, note that if you run a parameter sweep 
 (by providing multiple values for a given parameter), you must also pass the `--multirun` flag. Training will run in the 
-background on the training server, and models stored in the model registry. You will be notified when the training job 
-completes.
+background on the training server, and store the trained models in the model registry when complete. You will be 
+notified when the training job completes.
 
 ### Deploy a model
 
@@ -456,8 +456,8 @@ There are two commands for running inference:
 ```
 
 In the first case, you may specify an integer ID from the test dataset, which will be loaded and classified by the 
-model. In the second case, you may upload an image (drag and drop into your Discord message); example MNIST images may 
-be found in the [tests/resources](tests/resources) directory.
+model. In the second case, you may upload an image (drag and drop the image file into your Discord message); example 
+MNIST images may be found in the [tests/resources](tests/resources) directory.
 
 ### Registry Summary
 
@@ -470,7 +470,7 @@ their associated metrics.
 
 ![Server Logs](./resources/demo_logs.png)
 
-You may use the `>logs` command at any time to get the server logs, which are kept by each backend server separately. 
+You may use the `>logs` command at any time to get the server logs. 
 
 ### Chat
 
