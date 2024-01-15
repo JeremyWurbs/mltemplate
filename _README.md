@@ -349,7 +349,7 @@ rye run mlflow_server
 
 Once the MLFlow server is up and running, you may get local access by opening a browser to its address:
 
-![MLFlow Model Registry](./resources/mlflow_model_registry.png)
+![MLFlow Model Registry](./resources/mlflow.png)
 
 2. Start the Gateway server:
 
@@ -393,7 +393,7 @@ rye run discord_client
 tensorboard --logdir ${HOME}/mltemlpate/tensorboard
 ```
 
-![Tensorboard Example](./resources/tensorboard_sample.png)
+![Tensorboard Example](./resources/tensorboard.png)
 
 #### Advanced Deployment
 
