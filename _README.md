@@ -394,7 +394,13 @@ mlflow server --backend-store-uri ${HOME}/mltemplate/mlflow --port 8080
 
 Once the MLFlow server is up and running, you may get local access by opening a browser to its address:
 
+<details>
+
+<summary>Image</summary>
+
 ![MLFlow Model Registry](./resources/mlflow.png)
+
+</details>
 
 2. Start the Gateway server:
 
