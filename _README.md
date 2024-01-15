@@ -175,7 +175,8 @@ Build the docs using [sphinx](https://www.sphinx-doc.org/en/master/):
 $ rye run docs
 ```
 
-Both HTML and PDF docs will be built, located in `docs/_build/html` and `docs/_build/simplepdf` respectively.
+Both HTML and PDF docs will be built, located in `docs/_build/html` (i.e. open *index.html* in a browser) and 
+`docs/_build/simplepdf/Mltemplate.pdf` respectively.
 
 ## Dependency Graph
 
