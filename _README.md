@@ -302,8 +302,8 @@ are automatically passed to GPT, which will provide debug advice on any errors t
 ![Package Structure](./resources/package_structure.png)
 
 The overall component structure of the demo application is shown above. To run the demo, you will need to set up a 
-private Discord server for the frontend, and then run each of the backend servers in turn. The instructions below detail 
-each step.
+private Discord server for the frontend, and then run each of the backend servers in turn. The instructions for each 
+step are detailed below.
 
 ### Set up your front-end deployment
 
