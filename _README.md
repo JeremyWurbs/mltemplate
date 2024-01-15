@@ -82,7 +82,7 @@ To lint your code with [pylint](https://www.pylint.org/), [isort](https://pycqa.
 <details>
 
 <summary>
-<bold>$ rye run lint</bold>
+<b>$ rye run lint</b>
 </summary>
 
 ```text 
