@@ -78,7 +78,6 @@ class ConnectionClient:
             json={"dataset": dataset, "stage": stage, "idx": idx, "model": model},
             timeout=60,
         )
-        print(response.content)
         response = json.loads(response.content)
         return {
             "image": ascii_to_pil(response["image"]),

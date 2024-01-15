@@ -11,6 +11,7 @@ from fastapi import FastAPI, HTTPException
 from pytorch_lightning import LightningDataModule
 
 from mltemplate import MltemplateBase
+from mltemplate.backend.deployment import DeploymentServer
 from mltemplate.backend.gateway.connection_client import ConnectionClient as GatewayConnection
 from mltemplate.backend.gateway.types import (
     BestModelForExperimentInput,
@@ -54,6 +55,7 @@ class GatewayServer(MltemplateBase):
         super().__init__()
         self.registry = Registry(tracking_server_uri=tracking_server_uri)
         self.training_server = TrainingServer.connection(self.config["HOSTS"]["TRAINING_SERVER"])
+        self.deployment_server = DeploymentServer.connection(self.config["HOSTS"]["DEPLOYMENT_SERVER"])
 
         self.commands: List[str] = ["commands", "models", "load-model", "classify-by-id"]
         self.gpt = None
@@ -129,63 +131,36 @@ class GatewayServer(MltemplateBase):
         @app_.post("/load-model")
         def load_model(payload: LoadModelInput):
             self.logger.debug(f"Received load_model request with payload: {payload}.")
-            if (payload.model is None or payload.version is None) and payload.run_id is None:
-                err_message = "Must specify either (1) model and version or (2) run_id."
-                self.logger.error(err_message)
-                raise HTTPException(status_code=400, detail=err_message)
-
-            if payload.run_id is not None:
-                try:
-                    model_name_and_version = self.registry.model_name_and_version(payload.run_id)
-                except ValueError as err:  # If the model is not found in the registry
-                    self.logger.error(err)
-                    raise HTTPException(status_code=400, detail=str(err)) from err
-            else:
-                model_name_and_version = f"{payload.model}/{payload.version}"
-
-            model = mlflow.pyfunc.load_model(f"models:/{model_name_and_version}")
-            self.loaded_models[model_name_and_version] = model
-            self.default_model = model_name_and_version
+            self.deployment_server.load_model(
+                model=payload.model,
+                version=payload.version,
+                run_id=payload.run_id,
+            )
             self.logger.debug("Returning load_model request.")
             return True
 
         @app_.post("/classify-id")
         def classify_id(payload: ClassifyIDInput):
             self.logger.debug(f"Received classify_by_id request with payload: {payload}.")
-            model = self._retrieve_model(payload.model)
-            dataset = self._retrieve_dataset(payload.dataset)
-            image, label = dataset.sample(stage=payload.stage, idx=payload.idx)
-
-            logits = model.predict(image.numpy())
-            prediction = logits.argmax()
-
-            response = {
-                "label": label,
-                "prediction": int(prediction),
-                "logits": logits.tolist(),
-            }
+            response = self.deployment_server.classify_id(
+                dataset=payload.dataset,
+                stage=payload.stage,
+                idx=payload.idx,
+                model=payload.model,
+            )
+            response["image"] = pil_to_ascii(response["image"])
+            print(response)
+            print(f'type: {type(response)}')
             self.logger.debug(f"Returning classify_by_id request with data: {response}.")
-            response["image"] = pil_to_ascii(tensor_to_pil(image))
             return response
 
         @app_.post("/classify-image")
         def classify_image(payload: ClassifyImageInput):
             self.logger.debug(f"Received classify_image request with payload {payload}.")
-            model = self._retrieve_model(payload.model)
-
-            # Convert image to ndarray with an added batch dimension
-            image = ascii_to_pil(payload.image)  # (C, H, W)
-            if image.mode in ["L", "LA"]:
-                image_format = "L"
-            else:
-                image_format = "RGB"
-            image = pil_to_ndarray(image, image_format=image_format).astype(np.float32)
-            image = np.expand_dims(image, axis=0)  # (B, C, H, W)
-
-            logits = model.predict(image)
-            prediction = logits.argmax()
-
-            response = {"prediction": int(prediction), "logits": logits.tolist()}
+            response = self.deployment_server.classify_image(
+                image=ascii_to_pil(payload.image),
+                model=payload.model,
+            )
             self.logger.debug(f"Returning classify_image request with data: {response}.")
             return response
 
