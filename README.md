@@ -44,3 +44,11 @@ modular, so if you don't need a particular component, you can simply delete it. 
 - - [x] [Github Actions](https://github.com/JeremyWurbs/mltemplate/actions) CI/CD workflows
 - - [x] [pylint](https://www.pylint.org/), [isort](https://pycqa.github.io/isort/) and [black](https://black.readthedocs.io/en/stable/) for code formatting and linting
 - - [x] [pytest](https://docs.pytest.org/en/6.2.x/) for unit testing
+
+For more information, have a look at your new project's [README](_README.md) or, better yet, just hit the template 
+button as play around with it in your own repo.
+
+# Contributing
+
+If you find any bugs or have suggestions for improvements, please open an issue or submit a pull request. Contributions
+are welcome!

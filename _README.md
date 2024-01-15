@@ -237,9 +237,15 @@ dependencies.
 
 ## Building the Package
 
+To build the package:
+
 ```commandline
 rye build
 ```
+
+<details> 
+
+<summary>Output</summary>
 
 ```text
 building mltemplate
@@ -254,6 +260,8 @@ building mltemplate
 * Building wheel...
 Successfully built mltemplate-0.1.0.tar.gz and mltemplate-0.1.0-py3-none-any.whl
 ```
+
+</details>
 
 ## Continuous Integration
 
