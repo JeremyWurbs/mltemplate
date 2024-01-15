@@ -86,6 +86,8 @@ To lint your code with [pylint](https://www.pylint.org/), [isort](https://pycqa.
 </summary>
 
 ```text 
+$ rye run lint
+
 pylint mltemplate/
 
 ------------------------------------
