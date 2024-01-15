@@ -2,7 +2,7 @@
 
 Docker is a tool used to isolate complete software builds along with their environment contexts for ease of testing
 and deployment. Docker can package an application and its dependencies in a virtual container that can run on any Linux, 
-Windows, or macOS computer. 
+Windows, or MacOS computer. 
 
 A Docker package is called an *image* which, when run in the Docker daemon becomes known as a *container*. You create
 Docker images by creating Dockerfiles, which are very similar to bash scripts. 
@@ -62,7 +62,7 @@ similar to:
 # Mltemplate
 
 There are a number of starter images provided to package and deploy Mltemplate, provided for your convenience. All the 
-Mltemplate-related images are given in the associated [Dockerfile](mltemplate/Dockerfile), using a multi-stage build. 
+Mltemplate-related images are given in the associated [Dockerfile](local/Dockerfile), using a multi-stage build. 
 The individual stages can be built and cached separately, and are described below.
 
 ## GPU (Nvidia) Support
@@ -90,14 +90,14 @@ The Mltemplate base image installs all the dependencies required to run Mltempla
 itself. The reason for this build structure is that the base image may take up to an hour to build, but will only need 
 rebuilding when package dependencies change.
 
-To build the base image, make sure the first line in the [associated Dockerfile](docker/mltemplate/Dockerfile) 
+To build the base image, make sure the first line in the [associated Dockerfile](docker/local/Dockerfile) 
 matches your build environment. I.e. for an Ubuntu 22.04 CPU-only build, uncomment and use the `FROM ubuntu:22.04`; for 
 a GPU build, use the image built above, i.e. uncomment and use the `FROM nvidia/cuda:mltemplate` line. 
 
 Then build the image:
 
 ```commandline
-docker build -t mltemplate:base -f docker/mltemplate/Dockerfile .
+docker build -t mltemplate:base -f docker/local/Dockerfile .
 ```
 
 ## Release Image
@@ -105,7 +105,7 @@ docker build -t mltemplate:base -f docker/mltemplate/Dockerfile .
 The release image installs the release version of Mltemplate, and is built on top of the base image.
 
 ```commandline
-docker build -t mltemplate:release -f docker/mltemplate/Dockerfile .
+docker build -t mltemplate:release -f docker/local/Dockerfile .
 ```
 
 ## Dev Image
@@ -114,7 +114,7 @@ The dev image additionally installs all the dev dependencies— for example, tho
 tests— and is built on top of the release image.
 
 ```commandline 
-docker build -t mltemplate:dev -f docker/dev/Dockerfile .
+docker build -t mltemplate:dev -f docker/local/Dockerfile .
 ```
 
 You may then run this image interactively, and run the unit tests, for example:
@@ -127,7 +127,7 @@ rye run tests
 The same may be accomplished by building the test stage:
 
 ```commandline
-docker build -t mltemplate:test -f docker/test/Dockerfile .
+docker build -t mltemplate:test -f docker/local/Dockerfile .
 docker run mltemplate:test
 ```
 
@@ -139,7 +139,7 @@ Finally, the backend stage can be used to automatically run all the required bac
 application. It may be built with:
 
 ```commandline
-docker build -t mltemplate:backend -f docker/backend/Dockerfile .
+docker build -t mltemplate:backend -f docker/local/Dockerfile .
 ```
 
 And then subsequently run with:
