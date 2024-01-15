@@ -484,7 +484,9 @@ a general message.
 
 You may use the `debug` command at any time to request GPT to help debug any problem with the model or servers. The 
 server logs are automatically passed to GPT. The debug command itself may be run alone, or the user may optionally pass 
-a message to GPT to help it understand the context of the debug request. For example:
+a message to GPT to help it understand the context of the debug request. 
+
+Examples:
 
 ```commandline
 >debug

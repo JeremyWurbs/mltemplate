@@ -1,18 +1,18 @@
 """Unit test methods for the mltemplate.core.registry.Registry class."""
 import pytest
 
-from mltemplate import Registry
+from mltemplate.modules import Registry
 
 
 def test_registry():
     """Tests the Registry class."""
     registry = Registry()
 
-    if len(registry.mlflow.fetch_runs()) == 0:
-        pytest.skip("No runs found in MLflow.")
+    if len(registry.models) == 0:
+        pytest.skip("No models found in the model registry.")
         # TODO: Add a training run to the test suite.
 
-    run_id = registry.mlflow.fetch_runs()[0]["run_id"]
+    run_id = list(registry.models.keys())[0]
 
     model_name = registry.model_name(run_id)
     assert isinstance(model_name, str)
@@ -28,15 +28,6 @@ def test_registry():
 
     experiment_ids = registry.experiment_ids
     assert isinstance(experiment_ids, list)
-
-    runs = registry.mlflow.fetch_runs()
-    assert isinstance(runs, list)
-
-    runs = registry.mlflow.fetch_runs(experiments="MNIST")
-    assert isinstance(runs, list)
-
-    runs = registry.mlflow.fetch_runs(experiments=["MNIST"])
-    assert isinstance(runs, list)
 
     with pytest.raises(ValueError):
         registry.model_name_and_version(run_id="")
