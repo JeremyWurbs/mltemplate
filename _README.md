@@ -21,10 +21,9 @@ To run the end-to-end demo application, refer to the [Demo](#Demo) section below
 
 # Package Structure
 
-The mltemplate package is an end-to-end machine learning framework for training and deploying models. It is meant for
+The mltemplate package is an end-to-end machine learning framework for training and deploying models. It is meant 
 to help kickstart new projects, containing all the structural components necessary to train, manage and deploy models. 
-It is expected that you will need to adapt the package to your specific needs, but the provided package structure should 
-be a good starting point. It is modular, so if you don't need a particular component, you can simply delete it.
+Mltemplate has been created in a modular design, so if a particular component is not needed, it can simply be deleted.
 
 At a high level, the mltemplate package covers the following components of the ML lifecycle:
 
@@ -40,14 +39,14 @@ The Mltemplate package has been tested on Ubuntu 22.04 with Python 3.10.12.
 
 The mltemplate package is organized into the following components:
 
-- **[docs](docs)**. Contains the build files for sphinx documentation. Refer to the [Documentation](#Documentation) 
+- **[docs](docs)**. Contains the build files for Sphinx documentation. Refer to the [Documentation](#Documentation) 
     section for more details;
-- **[docker](docker)**. Contains Dockerfiles for building the mltemplate docker image. Refer to the [Docker](./docker) 
+- **[docker](docker)**. Contains Dockerfiles for building the mltemplate Docker image. Refer to the [Docker](./docker) 
     module for more details;
 - **[mltemplate](mltemplate)**: The main package, containing all the core functionality of the project;
   - **[mltemplate/backend](mltemplate/backend)**: Contains modules for running each of the discord, gateway and 
       training servers;;
-  - **[mltemplate/configs](mltemplate/configs)**: Contains the (hydra) yaml files for model training;
+  - **[mltemplate/configs](mltemplate/configs)**: Contains the (Hydra) yaml files for model training;
   - **[mltemplate/core](mltemplate/core)**: Contains core mltemplate packages, including:
     - **[Config](mltemplate/core/config.py)**. This class provides access to the associated 
       [config.ini](mltemplate/core/config.ini) file, used for package-level configurations;
@@ -72,7 +71,7 @@ The mltemplate package is organized into the following components:
 # Package Management
 
 It is highly recommended to use [Rye](https://github.com/mitsuhiko/rye) as your package manager. In addition to handling 
-your virtual environment and dependencies for you, there are additionally a number of useful commands available, which 
+your virtual environment and dependencies for you, a number of useful commands have also been included, which 
 you can use through `rye run <command>`.
 
 ## Linting
@@ -80,9 +79,15 @@ you can use through `rye run <command>`.
 To lint your code with [pylint](https://www.pylint.org/), [isort](https://pycqa.github.io/isort/) and 
 [black](https://github.com/psf/black):
 
+<details>
+
+<summary>
+
 ```commandline
 $ rye run lint
 ```
+
+</summary>
 
 ```text 
 pylint mltemplate/
@@ -108,6 +113,8 @@ black -l 120 --check tests/
 All done! ✨ 🍰 ✨
 14 files would be left unchanged.
 ```
+
+</details>
 
 ## Unit Tests
 
