@@ -17,6 +17,8 @@ You may use standard python tools (pip) as desired, but it is recommended to use
 $ rye sync
 ```
 
+To run the end-to-end demo application, refer to the [Demo](#Demo) section below. 
+
 # Package Structure
 
 The mltemplate package is an end-to-end machine learning framework for training and deploying models. It is meant for
@@ -45,10 +47,10 @@ The mltemplate package is organized into the following components:
 - **[mltemplate](mltemplate)**: The main package, containing all the core functionality of the project;
   - **[mltemplate/backend](mltemplate/backend)**: Contains modules for running each of the discord, gateway and 
       training servers;;
-  - **[mltemplate/config](mltemplate/config)**: Contains the (hydra) yaml files for model training;
+  - **[mltemplate/configs](mltemplate/configs)**: Contains the (hydra) yaml files for model training;
   - **[mltemplate/core](mltemplate/core)**: Contains core mltemplate packages, including:
     - **[Config](mltemplate/core/config.py)**. This class provides access to the associated 
-      [config.ini](lunit/core/config.ini) file, used for package-level configurations;
+      [config.ini](mltemplate/core/config.ini) file, used for package-level configurations;
     - **[MltemplateBase](mltemplate/core/base.py)**. This class serves as a helper base class. It provides unified 
       logging functionality, among other features.
   - **[mltemplate/data](mltemplate/data)**. Contains modules for individual `pl.LightningDataModule` datasets;
@@ -67,16 +69,11 @@ The mltemplate package is organized into the following components:
 - **[tests](tests)**: Contains unit tests for the mltemplate package. Refer to the [Unit Tests](#Unit-Tests) section for 
     more details;
 
-# Usage
-
-To run the end-to-end demo, refer to the [end-to-end demo](#End-to-End-Demo) section below. It requires a 10-minute 
-discord setup.
-
 # Package Management
 
-It is highly recommended to use Rye as your package manager. In addition to handling your virtual environment and 
-dependencies for you, there are additionally a number of useful commands available, which you can use through 
-`rye run <command>`.
+It is highly recommended to use [Rye](https://github.com/mitsuhiko/rye) as your package manager. In addition to handling 
+your virtual environment and dependencies for you, there are additionally a number of useful commands available, which 
+you can use through `rye run <command>`.
 
 ## Linting
 
@@ -234,14 +231,13 @@ from [GithubActions](https://github.com/JeremyWurbs/mltemplate/actions).
 
 # End-to-End Demo
 
-The end-to-end demo serves a simple model through a discord bot. It is meant to showcase the full functionality of the
-mltemplate package, and is meant to be a good starting point for your own projects. 
+The end-to-end application demo allows training and deploying models through a private discord server. It is meant to 
+showcase the full functionality of the mltemplate package, and provide a starting point for deploying your own models.
 
-After setting up the backend servers, an end user will be able to 
-do the following through your private discord server:
+After setting up the backend servers, an end user will be able to do the following through your private discord server:
 
 1. **Train a model**. The user may start a training job, passing in Hydra command line options to configure the training 
-or run multirun sweeps. The training job will be tracked in MLFlow, with logs and metrics available through Tensorboard. 
+or run sweeps. The training job will be tracked in MLFlow, with logs and metrics available through Tensorboard. 
 The user will be notified when the training job completes, with all resulting models stored in the model registry.
 2. **Deploy a model**. The user may deploy a model from the model registry, which will be served through the gateway
 server on subsequent requests.
@@ -265,9 +261,9 @@ are automatically passed to GPT, which will provide debug advice on any errors t
 
 ![Package Structure](./resources/package_structure.png)
 
-The overall structure of the demo is shown above. To run the demo, you will need to run set up a Discord bot/server for 
-the frontend, and then run the backend servers to run your application pipeline. The instructions below detail each 
-step.
+The overall component structure of the demo application is shown above. To run the demo, you will need to run set up a 
+private Discord server for the frontend, and then run the backend servers to run your application pipeline. The 
+instructions below detail each step.
 
 ### Set up your front-end deployment
 
@@ -325,8 +321,8 @@ Notes:
   - If you choose different ports for the servers, you will need to update the hosts listed in your 
 [config.ini](mltemplate/core/config.ini) file to match, or pass them in as command line arguments to each other server. 
   - The default configs assume that output data (MLFlow registry, hydra training runs, tensorboard logs, standard 
-debug logs, etc.) will be stored in `${HOME}/mltemplate` and, for unit tests, that the project has been installed in `
-${HOME}/projects/mltemplate`. If you wish to change these locations, you will need to update the same 
+debug logs, etc.) will be stored in `${HOME}/mltemplate` and, for unit tests, that the project has been installed in 
+`${HOME}/projects/mltemplate`. If you wish to change these locations, you will need to update the same 
 [config.ini](mltemplate/core/config.ini) file accordingly. 
   - The number of workers on the training server (`-w 4`) determines how many simultaneous training runs may be done. 
 If you set the number too high you may run out of memory. In practice, you will likely want to run the training server 
@@ -408,7 +404,7 @@ servers can be deployed with a single Docker Compose call from the docker direct
 docker compose up
 ```
 
-## Demo Showcase
+## Demo
 
 Once the backend servers are up and running, you may showcase your demo application through your discord server. You may 
 run the following commands in any channel the bot has access to, or DM the bot directly. If DMing the bot directly, all 
@@ -432,18 +428,24 @@ Examples:
 >train --config-name train.yaml --model=cnn --dataset=mnist --trainer.max_epochs=2,5,10,15,20 --multirun
 ```
 
-Any given arguments are directly passed and parsed by Hydra. In particular, note that if you run a parameter sweep (by 
-providing multiple values for a given parameter), you must also pass the `--multirun` flag. Training will run in the 
+Any given arguments are directly passed to and parsed by Hydra. In particular, note that if you run a parameter sweep 
+(by providing multiple values for a given parameter), you must also pass the `--multirun` flag. Training will run in the 
 background on the training server, and models stored in the model registry. You will be notified when the training job 
 completes.
 
 ### Deploy a model
 
-![Deploy Model](./resources/demo_deploy.png)
+![Deploy Model](./resources/demo_load_model.png)
+
+When deploying a model, pass in the model name and version number. For example, 
+
+```commandline
+>load_model ModelName 1
+```
 
 ### Run inference
 
-![Inference](./resources/demo_inference.png)
+![Inference](./resources/demo_classify.png)
 
 There are two commands for running inference:
 
@@ -453,34 +455,38 @@ There are two commands for running inference:
 ```
 
 In the first case, you may specify an integer ID from the test dataset, which will be loaded and classified by the 
-model. In the second case, you may upload an image (drag and drop into your discord message); example MNIST images may 
+model. In the second case, you may upload an image (drag and drop into your Discord message); example MNIST images may 
 be found in the [tests/resources](tests/resources) directory.
 
 ### Registry Summary
 
 ![Registry Summary](./resources/demo_registry_summary.png)
 
-You may use this command at any time to get a summary of the model registry, including all models and their associated
-metrics.
+You may use the `>registry_summary` command at any time to get a summary of the model registry, including all models and 
+their associated metrics.
 
 ### Server Logs
 
-![Server Logs](./resources/demo_server_logs.png)
+![Server Logs](./resources/demo_logs.png)
 
-You may use this command at any time to get the server logs, which are kept by each backend server separately. 
+You may use the `>logs` command at any time to get the server logs, which are kept by each backend server separately. 
 
 ### Chat
 
 ![Chat](./resources/demo_chat.png)
 
-You may use this command at any time to chat with GPT, which will be used as a general chat agent. This command is 
-implied if you DM the bot with a general message.
+You may use the `>chat` command at any time to converse freely with GPT. This command is implied if you DM the bot with 
+a general message.
 
 ### Debug
 
 ![Debug](./resources/demo_debug.png)
 
-You may use this command at any time to request GPT to help debug any problem with the model or servers. In this case
-the server logs are automatically passed to GPT, which will provide debug advice on any errors to the user. The debug 
-command may be run alone, or the user may optionally pass a message to GPT to help it understand the context of the
-debug request.
+You may use the `debug` command at any time to request GPT to help debug any problem with the model or servers. The 
+server logs are automatically passed to GPT. The debug command itself may be run alone, or the user may optionally pass 
+a message to GPT to help it understand the context of the debug request. For example:
+
+```commandline
+>debug
+>debug Check the training logs to see if the last training request is still running or returned an error.
+```
