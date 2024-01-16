@@ -1,11 +1,28 @@
 services:
-  backend:
-    build: ./local
+  gateway_server:
+    build: ./compose
     ports:
       - "5000:5000"
       - "8080:8080"
       - "8081:8081"
       - "8082:8082"
+      - "8083:8083"
+  registry_server:
+    build: ./compose
+    ports:
+      - "5000:5000"
+      - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
+  training_server:
+    build: ./compose
+    ports:
+      - "5000:5000"
+      - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
     deploy:
       resources:
         reservations:
@@ -13,3 +30,11 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+  deployment_server:
+    build: ./compose
+    ports:
+      - "5000:5000"
+      - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"

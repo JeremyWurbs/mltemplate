@@ -51,23 +51,6 @@ FROM base as release
 COPY mltemplate ./mltemplate
 RUN rye build
 RUN rye install . --python 3.10
+RUN rye run create_project_directories
 
 USER ${USER}
-
-FROM release as dev
-
-RUN rye sync  # includes the dev dependencies (e.g. pytest)
-
-
-FROM dev as test
-
-CMD PYTHONPATH=/home/${USER}/dev rye run test
-
-
-FROM release as backend
-
-CMD rye run mlflow server --backend-store-uri ${HOME}/mltemplate/mlflow --port 8080 & \
-    PYTHONPATH=${HOME}/dev python3 -m gunicorn -w 4 -b localhost:8082 -k uvicorn.workers.UvicornWorker "mltemplate.backend.training.training_server:app()" & \
-    PYTHONPATH=${HOME}/dev python3 -m gunicorn -w 1 -b localhost:8083 -k unicorn.workers.UvicornWorker "mltemplate.backend.deployment.deployment_server:app()" & \
-    python3 -m gunicorn -w 1 -b localhost:8081 -k uvicorn.workers.UvicornWorker "mltemplate.backend.gateway.gateway_server:app()" & \
-    PYTHONPATH=${HOME}/dev rye run discord_client

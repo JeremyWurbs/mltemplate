@@ -84,28 +84,20 @@ Once you have the appropriate Dockerfile, build the image:
 docker build -t nvidia/cuda:mltemplate -f docker/nvidia_12.2.2/Dockerfile .
 ```
 
-## Base Image
+## Release Image
 
-The Mltemplate base image installs all the dependencies required to run Mltemplate, but does **not** include Mltemplate 
-itself. The reason for this build structure is that the base image may take up to an hour to build, but will only need 
-rebuilding when package dependencies change.
+The release image is split into a multi-stage build, with the first stage installing all the dependencies required to
+run Mltemplate as a base image, without installing Mltemplate itself. This stage should stay cached for subsequent 
+rebuilds of the base image, and should only have to be rebuilt when the package dependencies change.
 
-To build the base image, make sure the first line in the [associated Dockerfile](docker/local/Dockerfile) 
+To build the release image, make sure the first line in the [associated Dockerfile](release/Dockerfile) 
 matches your build environment. I.e. for an Ubuntu 22.04 CPU-only build, uncomment and use the `FROM ubuntu:22.04`; for 
 a GPU build, use the image built above, i.e. uncomment and use the `FROM nvidia/cuda:mltemplate` line. 
 
 Then build the image:
 
 ```commandline
-docker build -t mltemplate:base -f docker/local/Dockerfile .
-```
-
-## Release Image
-
-The release image installs the release version of Mltemplate, and is built on top of the base image.
-
-```commandline
-docker build -t mltemplate:release -f docker/local/Dockerfile .
+docker build -t mltemplate:release -f docker/release/Dockerfile .
 ```
 
 ## Dev Image
@@ -114,7 +106,7 @@ The dev image additionally installs all the dev dependencies— for example, tho
 tests— and is built on top of the release image.
 
 ```commandline 
-docker build -t mltemplate:dev -f docker/local/Dockerfile .
+docker build -t mltemplate:dev -f docker/dev/Dockerfile .
 ```
 
 You may then run this image interactively, and run the unit tests, for example:
@@ -127,7 +119,7 @@ rye run tests
 The same may be accomplished by building the test stage:
 
 ```commandline
-docker build -t mltemplate:test -f docker/local/Dockerfile .
+docker build -t mltemplate:test -f docker/test/Dockerfile .
 docker run mltemplate:test
 ```
 
@@ -135,11 +127,11 @@ Which may be used to automate the testing of the dockerized application.
 
 ## Backend Image
 
-Finally, the backend stage can be used to automatically run all the required backend servers to run the package 
-application. It may be built with:
+Finally, the backend stage can be used to run all the required backend servers in a single container, similar to running 
+it locally on your own machine. It may be built with:
 
 ```commandline
-docker build -t mltemplate:backend -f docker/local/Dockerfile .
+docker build -t mltemplate:backend -f docker/backend/Dockerfile .
 ```
 
 And then subsequently run with:
@@ -155,6 +147,16 @@ docker run --gpus all mltemplate:backend
 ```
 
 ## Docker Compose 
+
+As an easier, albeit slightly more advanced usage, it is advised to use Docker Compose. A 
+[separate backend Dockerfile](compose/Dockerfile) is provided specifically for Compose, which separates out each server 
+into its own stage. The associated [docker-compose.yml](docker-compose.yml) file uses each stage to define a separate 
+container, which are run together with a single `docker compose up` command. 
+
+Using Docker Compose, servers can be run independently. For example, the training server may be restarted or even shut 
+off without affecting the other servers. Server resources may also be allocated on a per-server basis this way. More, 
+having the servers split into their own containers makes it easier to scale the application, where each server will 
+likely be running on its own machine and infrastructure.
 
 To configure the deployment servers, adapt the [provided Docker Compose file](docker-compose.yml) as desired. Then run
 the following from the docker directory to start the servers:
