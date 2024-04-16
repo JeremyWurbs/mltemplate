@@ -1,7 +1,7 @@
 """OpenAI GPT module."""
 from typing import Dict, List, Optional, Tuple, Union
 
-import openai.types.beta.threads.message_content_image_file
+from openai.types.beta.threads import ImageFileContentBlock, TextContentBlock
 from openai import OpenAI
 from openai.types import FileDeleted
 
@@ -145,11 +145,11 @@ class GPT(MltemplateBase):
         # Extract the message content
         message_response = Message(sender=message.role, text="")
         for response in message.content:
-            if isinstance(response, openai.types.beta.threads.message_content_image_file.MessageContentImageFile):
+            if isinstance(response, ImageFileContentBlock):
                 image_bytes = self.client.files.content(response.image_file.file_id).read()
                 image = bytes_to_pil(image_bytes)
                 message_response.images.append(image)
-            elif isinstance(response, openai.types.beta.threads.message_content_text.MessageContentText):
+            elif isinstance(response, TextContentBlock):
                 text = response.text
                 annotations = []
                 for index, annotation in enumerate(text.annotations):
